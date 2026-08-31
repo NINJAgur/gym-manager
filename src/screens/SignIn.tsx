@@ -49,9 +49,9 @@ export function SignIn() {
         ))}
       </div>
 
-      <LangToggle
-        style={{ position: 'absolute', top: '26px', insetInlineEnd: '22px', zIndex: 10 }}
-      />
+      {/* Physical `right`, not `inset-inline-end` — the latter flips the
+          control to the other corner the instant you switch language. */}
+      <LangToggle style={{ position: 'absolute', top: '26px', right: '22px', zIndex: 10 }} />
 
       <div
         style={s(

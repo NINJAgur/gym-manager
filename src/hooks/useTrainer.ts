@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import type { AssignedExercise, Exercise, PerformanceLog, TraineeOverview } from '../lib/types';
 import { fetchAssignedExercises } from './useTrainee';
+import { VIDEO_BUCKET, storagePath } from '../lib/video';
 import { qk } from './keys';
 
 const EXERCISE_COLS = 'id, category, name, description, video_url, machine_number';
@@ -78,12 +79,26 @@ export function useSaveExercise() {
         machine_number: draft.machine_number?.trim() || null,
       };
 
+      // Read the outgoing video before overwriting it, so a replaced upload
+      // does not sit in the bucket forever with nothing referencing it.
+      let previousVideo: string | null = null;
+      if (draft.id) {
+        const prev = await supabase
+          .from('exercises')
+          .select('video_url')
+          .eq('id', draft.id)
+          .single();
+        previousVideo = (prev.data as { video_url: string | null } | null)?.video_url ?? null;
+      }
+
       const query = draft.id
         ? supabase.from('exercises').update(row).eq('id', draft.id)
         : supabase.from('exercises').insert(row);
 
       const { data, error } = await query.select(EXERCISE_COLS).single();
       if (error) throw error;
+
+      if (previousVideo !== row.video_url) await discardUpload(previousVideo);
       return data as Exercise;
     },
     onSuccess: (exercise) => {
@@ -102,12 +117,25 @@ export function useUploadVideo() {
       const ext = file.name.split('.').pop()?.toLowerCase() ?? 'mp4';
       const path = `${crypto.randomUUID()}.${ext}`;
       const { error } = await supabase.storage
-        .from('exercise-videos')
+        .from(VIDEO_BUCKET)
         .upload(path, file, { cacheControl: '3600', contentType: file.type || undefined });
       if (error) throw error;
-      return supabase.storage.from('exercise-videos').getPublicUrl(path).data.publicUrl;
+      return supabase.storage.from(VIDEO_BUCKET).getPublicUrl(path).data.publicUrl;
     },
   });
+}
+
+/** Remove an uploaded file that nothing points at any more. Pasted links are
+   left alone, and a storage failure never fails the surrounding write — the
+   row change already succeeded and a stray file is not worth surfacing. */
+export async function discardUpload(url: string | null | undefined): Promise<void> {
+  const path = storagePath(url);
+  if (!path) return;
+  try {
+    await supabase.storage.from(VIDEO_BUCKET).remove([path]);
+  } catch {
+    /* orphan left behind; the row is already correct */
+  }
 }
 
 export function useDeleteExercise() {
@@ -115,8 +143,10 @@ export function useDeleteExercise() {
 
   return useMutation({
     mutationFn: async (id: string) => {
+      const existing = await supabase.from('exercises').select('video_url').eq('id', id).single();
       const { error } = await supabase.from('exercises').delete().eq('id', id);
       if (error) throw error;
+      await discardUpload((existing.data as { video_url: string | null } | null)?.video_url);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.masterExercises() });

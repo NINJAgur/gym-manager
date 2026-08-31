@@ -1,3 +1,17 @@
+export const VIDEO_BUCKET = 'exercise-videos';
+
+const PUBLIC_PREFIX = `/storage/v1/object/public/${VIDEO_BUCKET}/`;
+
+/** The object path if this URL is a file we uploaded, otherwise null.
+   Guards the cleanup: a pasted YouTube link is not ours to delete. */
+export function storagePath(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const at = url.indexOf(PUBLIC_PREFIX);
+  if (at < 0) return null;
+  const path = url.slice(at + PUBLIC_PREFIX.length).split(/[?#]/)[0];
+  return path ? decodeURIComponent(path) : null;
+}
+
 export type VideoSource =
   | { kind: 'iframe'; src: string }
   | { kind: 'file'; src: string }

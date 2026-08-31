@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { s } from '../lib/css';
 import { useLang } from '../i18n/LangProvider';
 import { GROUP_NAMES } from '../i18n/strings';
-import { useExercise, useSaveExercise, useUploadVideo } from '../hooks/useTrainer';
+import { discardUpload, useExercise, useSaveExercise, useUploadVideo } from '../hooks/useTrainer';
 import { Screen } from '../components/Screen';
 import { Splash } from '../components/Splash';
 import { Pressable } from '../components/Pressable';
@@ -30,6 +30,12 @@ export function ExerciseEditor() {
   const [machine, setMachine] = useState('');
   const [description, setDescription] = useState('');
 
+  // Uploads land in the bucket before the form is saved, so leaving without
+  // saving — or uploading twice — would strand files nothing references.
+  // Track what this visit put there and bin whatever the save didn't keep.
+  const uploaded = useRef<string[]>([]);
+  const keptUrl = useRef<string | null>(null);
+
   useEffect(() => {
     if (!existing) return;
     setName(existing.name);
@@ -38,6 +44,15 @@ export function ExerciseEditor() {
     setMachine(existing.machine_number ?? '');
     setDescription(existing.description ?? '');
   }, [existing]);
+
+  useEffect(
+    () => () => {
+      for (const url of uploaded.current) {
+        if (url !== keptUrl.current) void discardUpload(url);
+      }
+    },
+    [],
+  );
 
   if (!isNew && isPending) return <Splash />;
 
@@ -54,14 +69,24 @@ export function ExerciseEditor() {
         machine_number: machine,
         video_url: video,
       },
-      { onSuccess: () => navigate('/trainer/exercises') },
+      {
+        onSuccess: (saved) => {
+          keptUrl.current = saved.video_url;
+          navigate('/trainer/exercises');
+        },
+      },
     );
   };
 
   // The picker is a hidden input; the dashed button is the design's control.
   const onPick = (file: File | undefined) => {
     if (!file) return;
-    upload.mutate(file, { onSuccess: (url) => setVideo(url) });
+    upload.mutate(file, {
+      onSuccess: (url) => {
+        uploaded.current.push(url);
+        setVideo(url);
+      },
+    });
   };
 
   const groups = [...new Set([...GROUP_NAMES, category].filter(Boolean))];

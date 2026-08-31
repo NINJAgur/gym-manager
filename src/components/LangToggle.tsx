@@ -13,7 +13,9 @@ export function LangToggle({ style }: { style?: CSSProperties }) {
   const { lang, setLang } = useLang();
 
   return (
-    <div className="seg" style={{ flex: 'none', ...style }}>
+    // direction:ltr keeps EN | עברית in a fixed order; without it the flex row
+    // reverses under RTL and the two options trade places as you switch.
+    <div className="seg" style={{ flex: 'none', direction: 'ltr', ...style }}>
       <label className="seg-opt" style={s(lang === 'en' ? segOn : segOff)}>
         <input type="radio" name="lang" checked={lang === 'en'} onChange={() => setLang('en')} />
         EN
