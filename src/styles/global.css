@@ -1,0 +1,133 @@
+/* v2's <helmet> block, verbatim, plus the app-shell rules. */
+
+html,
+body {
+  margin: 0;
+  background: color-mix(in srgb, var(--color-text) 9%, var(--color-bg));
+  color: var(--color-text);
+  font-family: Archivo, system-ui, sans-serif;
+}
+:root {
+  --color-accent: #e0231a;
+  --color-accent-600: #c11d15;
+  --color-accent-700: #9c1710;
+  --color-accent-800: #71110b;
+  --color-accent-100: color-mix(in srgb, #e0231a 12%, var(--color-bg));
+  --color-accent-200: color-mix(in srgb, #e0231a 20%, var(--color-bg));
+}
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+a {
+  color: var(--color-accent-700);
+}
+a:hover {
+  color: var(--color-accent-800);
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sheetUp {
+  from {
+    transform: translateY(102%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes barGrow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes lineGrow {
+  from {
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+  }
+  to {
+    stroke-dasharray: 400;
+    stroke-dashoffset: 0;
+  }
+}
+.scr::-webkit-scrollbar {
+  width: 0;
+}
+
+/* The 390x812 artboard becomes the viewport. --app-height tracks the visual
+   viewport (see lib/viewport.ts) so an open keyboard shrinks the shell rather
+   than hiding the bottom action bar behind itself. */
+html,
+body {
+  height: 100%;
+}
+#root {
+  height: var(--app-height, 100%);
+  overflow: hidden;
+}
+
+/* A measurement is an LTR island: "10 kg", "80 kg × 6". Without this the RTL
+   inline context lays the number and its unit out right-to-left, so the unit
+   ends up on the wrong side. `isolate` keeps it from disturbing its neighbours. */
+.num {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Leave room when the browser scrolls a focused field into view. */
+.input,
+input.bare,
+textarea.bare {
+  scroll-margin-block: 24px;
+}
+
+/* Directional icons mirror under RTL. */
+[dir='rtl'] .dir-icon {
+  transform: scaleX(-1);
+}
+
+/* Native inputs that sit inside the design's own shells. */
+input.bare,
+textarea.bare {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  padding: 0;
+  color: var(--color-text);
+  font: 400 13px/1.4 Archivo, sans-serif;
+}
+input.bare::placeholder,
+textarea.bare::placeholder {
+  color: var(--color-neutral-500);
+}
