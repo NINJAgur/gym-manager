@@ -1,0 +1,5 @@
+# Client-side routing: every path is served by the app, not by a file on disk.
+# Without this, loading or refreshing /trainer/exercises/new returns 404 —
+# the app would only work if you always entered through /.
+# 200 rewrites rather than redirects, so the URL the user sees is preserved.
+/*    /index.html   200
