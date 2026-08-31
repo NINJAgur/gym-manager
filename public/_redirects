@@ -1,5 +1,10 @@
-# Client-side routing: every path is served by the app, not by a file on disk.
-# Without this, loading or refreshing /trainer/exercises/new returns 404 —
-# the app would only work if you always entered through /.
-# 200 rewrites rather than redirects, so the URL the user sees is preserved.
-/*    /index.html   200
+# Intentionally empty.
+#
+# SPA routing is handled by `not_found_handling: "single-page-application"`
+# in wrangler.jsonc, which serves index.html for any path that is not a real
+# asset. Cloudflare Workers rejects the Pages-style rule that used to live
+# here — `/*  /index.html  200` — as an infinite loop, because it would strip
+# `.html` / `/index` and re-trigger itself. It failed the deploy, not the build.
+#
+# Only restore a rule here if this moves to Cloudflare Pages, which uses this
+# file instead of the wrangler setting.
