@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gym-manager",
+  "compatibility_date": "2026-08-31",
+
+  // Static assets only — there is no Worker script. The app talks to Supabase
+  // directly from the browser, so nothing needs to run at the edge.
+  "assets": {
+    "directory": "./dist",
+
+    // Client-side routes are not files on disk. Without this, loading or
+    // refreshing /trainer/exercises/new returns 404 and the app only works
+    // when entered through /. This is the Workers equivalent of the
+    // `/* /index.html 200` rewrite that public/_redirects gives Pages.
+    "not_found_handling": "single-page-application"
+  }
+}
