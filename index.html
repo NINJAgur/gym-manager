@@ -9,7 +9,12 @@
     <!-- Left over from the black-and-red design; the app is light now. -->
     <meta name="theme-color" content="#f3f2f2" />
     <title>Gym Performance Tracker</title>
+    <!-- PNG fallbacks matter here: with only an SVG declared, anything that
+         cannot use it falls back to requesting /favicon.ico, which the SPA
+         rewrite answers with index.html — HTML, so the tab shows nothing. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
