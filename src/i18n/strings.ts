@@ -9,6 +9,17 @@ export const TR = {
     signInLine2: 'your gym stats',
     continueGoogle: 'Continue with Google',
 
+    // landing
+    landingHeadline: 'Your trainer sets the numbers. You just train.',
+    landingIntro:
+      'A private tool for a personal trainer and their trainees. The trainer assigns exercises and sets the weight and repetitions for each one; trainees open the app in the gym and see exactly what to do, with a technique video and their history.',
+    sellPoint1: 'The trainer assigns exercises from a shared library and sets the weight and reps for each trainee individually.',
+    sellPoint2: 'Trainees see only what applies to them, grouped by muscle group, with the machine number where it matters.',
+    sellPoint3: 'Every exercise carries a technique video and a description, so nobody has to remember the cues.',
+    sellPoint4: 'Each change is recorded, so progress over the weeks is visible to both of you.',
+    openApp: 'Open the app',
+    privacyPolicy: 'Privacy policy',
+    landingFooter: 'Sign in with the Google account your trainer has on file.',
     // trainee dashboard
     myExercises: 'My exercises',
     statExercises: 'Exercises',
@@ -97,6 +108,17 @@ export const TR = {
     signInLine2: 'לנתוני האימונים שלך',
     continueGoogle: 'המשך עם Google',
 
+    // landing
+    landingHeadline: 'המאמן קובע את המספרים. אתה פשוט מתאמן.',
+    landingIntro:
+      'כלי פרטי למאמן אישי ולמתאמנים שלו. המאמן משייך תרגילים וקובע לכל אחד את המשקל ומספר החזרות; המתאמנים פותחים את האפליקציה בחדר הכושר ורואים בדיוק מה לעשות, יחד עם סרטון טכניקה והיסטוריה.',
+    sellPoint1: 'המאמן משייך תרגילים ממאגר משותף וקובע לכל מתאמן בנפרד את המשקל ומספר החזרות.',
+    sellPoint2: 'המתאמנים רואים רק את מה שרלוונטי להם, מקובץ לפי קבוצות שרירים, עם מספר המכשיר במקום שבו הוא נחוץ.',
+    sellPoint3: 'לכל תרגיל יש סרטון טכניקה ותיאור, כך שאין צורך לזכור את הדגשים.',
+    sellPoint4: 'כל שינוי נרשם, כך שההתקדמות לאורך השבועות גלויה לשניכם.',
+    openApp: 'פתיחת האפליקציה',
+    privacyPolicy: 'מדיניות פרטיות',
+    landingFooter: 'התחבר עם חשבון Google שהמאמן שלך רשם.',
     // trainee dashboard
     myExercises: 'התרגילים שלי',
     statExercises: 'תרגילים',

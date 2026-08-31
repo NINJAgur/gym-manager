@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<!-- width/height as well as viewBox: without intrinsic dimensions this renders
+     as a broken image inside an <img>, which the landing page header uses. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
   <!-- Dumbbell whose bar is a rising progress line: gym and tracking in one
        mark. Plates in --color-text, line in the accent. Square corners, since
        the design system sets --radius-md: 0. At 16px the zigzag flattens into
