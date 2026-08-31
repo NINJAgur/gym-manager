@@ -28,6 +28,11 @@ export function Screen({ children }: { children: ReactNode }) {
           background: 'var(--color-bg)',
           position: 'relative',
           overflow: 'hidden',
+          // A flex column instead of the artboard's absolute insets: headers
+          // and action bars size to their own content, so type can grow
+          // without clipping against a hard-coded offset.
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {children}

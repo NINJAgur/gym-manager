@@ -14,7 +14,7 @@ export function ExerciseCatalogue() {
   const { data: exercises, isPending } = useMasterExercises();
   const remove = useDeleteExercise();
 
-  const [closed, setClosed] = useState<Record<string, boolean>>({});
+  const [opened, setOpened] = useState<Record<string, boolean>>({});
   const [armed, setArmed] = useState<string | null>(null);
 
   // A trash tap arms; the second within three seconds deletes.
@@ -38,13 +38,13 @@ export function ExerciseCatalogue() {
     <Screen>
       <div
         style={s(
-          'position:absolute;top:0;left:0;right:0;z-index:3;background:var(--color-bg);border-bottom:2px solid var(--color-text);padding:34px 22px 14px',
+          'flex:none;position:relative;z-index:3;background:var(--color-bg);border-bottom:2px solid var(--color-text);padding:34px 22px 14px',
         )}
       >
         <div style={s('display:flex;align-items:flex-start;justify-content:space-between;gap:12px')}>
           <div style={s('display:flex;align-items:center;gap:12px;min-width:0')}>
-            <IconCircle onClick={() => navigate('/trainer')} size={34} scale={0.92}>
-              <path className="dir-icon" d="m15 6-6 6 6 6" />
+            <IconCircle onClick={() => navigate('/trainer')} size={34} scale={0.92} mirror>
+              <path d="m15 6-6 6 6 6" />
             </IconCircle>
             <div style={s('display:flex;flex-direction:column;gap:5px;min-width:0')}>
               <span
@@ -85,18 +85,18 @@ export function ExerciseCatalogue() {
       <div
         className="scr"
         style={s(
-          'position:absolute;inset:150px 0 0;overflow-y:auto;scrollbar-width:none;padding-bottom:28px',
+          'flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding-bottom:28px',
         )}
       >
         {groups.map((group, gi) => {
-          const open = !closed[group.name];
+          const open = Boolean(opened[group.name]);
           return (
             <div
               key={group.name}
               style={s('animation:fadeUp .4s both;animation-delay:' + gi * 55 + 'ms')}
             >
               <Pressable
-                onClick={() => setClosed((prev) => ({ ...prev, [group.name]: !prev[group.name] }))}
+                onClick={() => setOpened((prev) => ({ ...prev, [group.name]: !prev[group.name] }))}
                 style={s(
                   'display:flex;align-items:center;justify-content:space-between;padding:14px 22px;cursor:pointer;background:var(--color-neutral-200);border-bottom:1px solid color-mix(in srgb, var(--color-text) 16%, transparent);transition:background .14s ease',
                 )}

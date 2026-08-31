@@ -58,7 +58,7 @@ export function TraineeCard({ trainee, index, open, onToggle, onAssign }: Props)
             <span
               className="tag"
               style={s(
-                'font:600 9.5px/1 Archivo,sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:5px 7px;' +
+                'font:600 7.5px/1 Archivo,sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:5px 7px;white-space:nowrap;' +
                   (fresh
                     ? 'background:var(--color-accent-200);color:var(--color-accent-700)'
                     : 'background:var(--color-neutral-200);color:var(--color-neutral-600)'),
@@ -66,7 +66,11 @@ export function TraineeCard({ trainee, index, open, onToggle, onAssign }: Props)
             >
               {tr.updatedWord} {relative}
             </span>
-            <span style={s('font:400 11px/1 Archivo,sans-serif;color:var(--color-neutral-600)')}>
+            <span
+              style={s(
+                'font:400 9px/1 Archivo,sans-serif;color:var(--color-neutral-600);white-space:nowrap',
+              )}
+            >
               {trainee.exercise_count} {tr.exercisesWord}
             </span>
           </div>
@@ -172,15 +176,19 @@ function AssignedRow({
 
   const dirty = weight !== (row.weight ?? 0) || reps !== (row.reps ?? 0);
 
+  // A prescription of zero reps says nothing, and mid-edit the trainer passes
+  // through one on the way from "just assigned" to a real number. Wait for it.
+  const worthSaving = dirty && reps > 0;
+
   useEffect(() => {
-    if (!dirty) return;
+    if (!worthSaving) return;
     const timer = setTimeout(
       () => setNumbers.mutate({ traineeId, exerciseId: row.id, weight, reps }),
       900,
     );
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [weight, reps, dirty, traineeId, row.id]);
+  }, [weight, reps, worthSaving, traineeId, row.id]);
 
   return (
     <div>

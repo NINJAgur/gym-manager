@@ -197,11 +197,37 @@ export function useSetNumbers() {
 
   return useMutation({
     mutationFn: async ({ traineeId, exerciseId, weight, reps }: SetNumbersVars) => {
-      const { data, error } = await supabase
+      // One entry per day per exercise. Adjusting the steppers again the same
+      // day revises today's record instead of stacking duplicates on it.
+      const dayStart = new Date();
+      dayStart.setHours(0, 0, 0, 0);
+
+      const existing = await supabase
         .from('performance_logs')
-        .insert({ trainee_id: traineeId, exercise_id: exerciseId, weight, reps })
-        .select('id, trainee_id, exercise_id, weight, reps, created_at')
-        .single();
+        .select('id')
+        .eq('trainee_id', traineeId)
+        .eq('exercise_id', exerciseId)
+        .gte('created_at', dayStart.toISOString())
+        .order('created_at', { ascending: false })
+        .limit(1);
+      if (existing.error) throw existing.error;
+
+      const COLS = 'id, trainee_id, exercise_id, weight, reps, created_at';
+      const todaysRow = (existing.data as { id: string }[] | null)?.[0];
+
+      const { data, error } = todaysRow
+        ? await supabase
+            .from('performance_logs')
+            .update({ weight, reps, created_at: new Date().toISOString() })
+            .eq('id', todaysRow.id)
+            .select(COLS)
+            .single()
+        : await supabase
+            .from('performance_logs')
+            .insert({ trainee_id: traineeId, exercise_id: exerciseId, weight, reps })
+            .select(COLS)
+            .single();
+
       if (error) throw error;
       return { ...(data as PerformanceLog), weight: Number((data as PerformanceLog).weight) };
     },
@@ -225,6 +251,9 @@ export function useSetNumbers() {
             : ex,
         ),
       );
+      // Mirror the one-per-day rule so the chart doesn't sprout a duplicate
+      // point before the server round-trip settles it.
+      const today = new Date().toDateString();
       queryClient.setQueryData<PerformanceLog[]>(historyKey, (old) => [
         {
           id: `optimistic-${now}`,
@@ -234,7 +263,7 @@ export function useSetNumbers() {
           reps: vars.reps,
           created_at: now,
         },
-        ...(old ?? []),
+        ...(old ?? []).filter((entry) => new Date(entry.created_at).toDateString() !== today),
       ]);
 
       return { assignedKey, historyKey, prevAssigned, prevHistory };

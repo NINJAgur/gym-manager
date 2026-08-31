@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { s } from '../lib/css';
+import { matchesPrefix } from '../lib/search';
 import { useLang } from '../i18n/LangProvider';
 import { useAuth } from '../auth/AuthProvider';
 import { useTrainees } from '../hooks/useTrainer';
@@ -22,15 +23,10 @@ export function TrainerDashboard() {
   const [assignTarget, setAssignTarget] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const visible = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    return (trainees ?? []).filter(
-      (t) =>
-        !needle ||
-        (t.full_name ?? '').toLowerCase().includes(needle) ||
-        (t.email ?? '').toLowerCase().includes(needle),
-    );
-  }, [trainees, query]);
+  const visible = useMemo(
+    () => (trainees ?? []).filter((t) => matchesPrefix(query, t.full_name, t.email)),
+    [trainees, query],
+  );
 
   const target = (trainees ?? []).find((t) => t.id === assignTarget) ?? null;
 
@@ -38,7 +34,7 @@ export function TrainerDashboard() {
     <Screen>
       <div
         style={s(
-          'position:absolute;top:0;left:0;right:0;z-index:3;background:var(--color-bg);border-bottom:2px solid var(--color-text);padding:34px 22px 16px',
+          'flex:none;position:relative;z-index:3;background:var(--color-bg);border-bottom:2px solid var(--color-text);padding:34px 22px 16px',
         )}
       >
         <div style={s('display:flex;align-items:flex-start;justify-content:space-between;gap:12px')}>
@@ -103,7 +99,7 @@ export function TrainerDashboard() {
       <div
         className="scr"
         style={s(
-          'position:absolute;inset:174px 0 0;overflow-y:auto;scrollbar-width:none;padding:14px 22px 28px;display:flex;flex-direction:column;gap:12px',
+          'flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding:14px 22px 28px;display:flex;flex-direction:column;gap:12px',
         )}
       >
         {visible.map((trainee, index) => (

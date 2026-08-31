@@ -70,11 +70,11 @@ export function ExerciseEditor() {
     <Screen>
       <div
         style={s(
-          'position:absolute;top:0;left:0;right:0;z-index:3;background:var(--color-bg);border-bottom:2px solid var(--color-text);display:flex;align-items:center;gap:12px;padding:34px 20px 14px',
+          'flex:none;position:relative;z-index:3;background:var(--color-bg);border-bottom:2px solid var(--color-text);display:flex;align-items:center;gap:12px;padding:34px 20px 14px',
         )}
       >
-        <IconCircle onClick={() => navigate('/trainer/exercises')} size={34} scale={0.92}>
-          <path className="dir-icon" d="m15 6-6 6 6 6" />
+        <IconCircle onClick={() => navigate('/trainer/exercises')} size={34} scale={0.92} mirror>
+          <path d="m15 6-6 6 6 6" />
         </IconCircle>
         <span style={s('font:800 18px/1 Archivo,sans-serif;letter-spacing:-.02em')}>
           {isNew ? tr.newExercise : tr.editExercise}
@@ -84,7 +84,7 @@ export function ExerciseEditor() {
       <div
         className="scr"
         style={s(
-          'position:absolute;inset:82px 0 96px;overflow-y:auto;scrollbar-width:none;padding:22px 22px 24px;display:flex;flex-direction:column;gap:22px',
+          'flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding:22px 22px 24px;display:flex;flex-direction:column;gap:22px',
         )}
       >
         <div className="field">
@@ -193,7 +193,7 @@ export function ExerciseEditor() {
 
       <div
         style={s(
-          'position:absolute;bottom:0;left:0;right:0;padding:16px 22px 26px;background:var(--color-bg);border-top:2px solid var(--color-text);z-index:6',
+          'flex:none;padding:16px 22px 26px;background:var(--color-bg);border-top:2px solid var(--color-text);z-index:6',
         )}
       >
         <Pressable

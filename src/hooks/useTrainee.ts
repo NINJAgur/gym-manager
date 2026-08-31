@@ -88,6 +88,9 @@ export function useExerciseHistory(traineeId: string | undefined, exerciseId: st
         .select('id, trainee_id, exercise_id, weight, reps, created_at')
         .eq('trainee_id', traineeId!)
         .eq('exercise_id', exerciseId!)
+        // Zero-rep rows are mid-edit artefacts, never a real prescription.
+        // Zero *weight* is legitimate — bodyweight work — so it stays.
+        .gt('reps', 0)
         .order('created_at', { ascending: false })
         .limit(20);
       if (error) throw error;

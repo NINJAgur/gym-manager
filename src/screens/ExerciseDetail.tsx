@@ -29,7 +29,7 @@ export function ExerciseDetail() {
     <Screen>
       <div
         className="scr"
-        style={s('position:absolute;inset:0;overflow-y:auto;scrollbar-width:none')}
+        style={s('flex:1;min-height:0;overflow-y:auto;scrollbar-width:none')}
       >
         <div style={s('position:sticky;top:0;z-index:5;background:var(--color-bg)')}>
           <VideoEmbed url={exercise.video_url} onBack={back} />

@@ -84,6 +84,7 @@ export function CategoryAccordion({
                 <span
                   style={s('font:400 11.5px/1 Archivo,sans-serif;color:var(--color-neutral-600)')}
                 >
+                  {exercise.machine_number ? `${tr.machineWord} ${exercise.machine_number} · ` : ''}
                   {exercise.logged_at
                     ? `${tr.updatedWord} ${shortDate(exercise.logged_at, lang)}`
                     : tr.noRecord}

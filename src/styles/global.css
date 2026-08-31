@@ -8,6 +8,9 @@ body {
   font-family: Archivo, system-ui, sans-serif;
 }
 :root {
+  --type-sm: 1.4;
+  --type-md: 1.4;
+  --type-lg: 1.4;
   --color-accent: #e0231a;
   --color-accent-600: #c11d15;
   --color-accent-700: #9c1710;
@@ -126,6 +129,7 @@ textarea.bare {
   padding: 0;
   color: var(--color-text);
   font: 400 13px/1.4 Archivo, sans-serif;
+  font-size: calc(13px * var(--type-md, 1));
 }
 input.bare::placeholder,
 textarea.bare::placeholder {

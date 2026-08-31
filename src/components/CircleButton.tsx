@@ -18,6 +18,7 @@ export function IconCircle({
   size = 34,
   scale = 0.9,
   danger,
+  mirror,
   title,
   children,
 }: {
@@ -25,6 +26,9 @@ export function IconCircle({
   size?: number;
   scale?: number;
   danger?: boolean;
+  /** Directional glyph — mirrors under RTL. Must sit on the <svg>, not the
+     <path>: scaleX(-1) on a path flips it out of the viewBox entirely. */
+  mirror?: boolean;
   title?: string;
   children: ReactNode;
 }) {
@@ -51,6 +55,7 @@ export function IconCircle({
       )}
     >
       <svg
+        className={mirror ? 'dir-icon' : undefined}
         width={Math.round(size * 0.42)}
         height={Math.round(size * 0.42)}
         viewBox="0 0 24 24"

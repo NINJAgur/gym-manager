@@ -17,6 +17,7 @@ export function TraineeDashboard() {
   const location = useLocation();
   const cameFrom = (location.state as { exerciseId?: string } | null)?.exerciseId ?? null;
 
+  // Tracks what the trainee has shut, so groups start expanded.
   const [closed, setClosed] = useState<Record<string, boolean>>({});
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: exercises, isPending } = useAssignedExercises(profile?.id);
@@ -33,7 +34,7 @@ export function TraineeDashboard() {
     <Screen>
       <div
         style={s(
-          'position:absolute;top:0;left:0;right:0;z-index:3;background:var(--color-bg);border-bottom:2px solid var(--color-text);padding:34px 22px 14px',
+          'flex:none;position:relative;z-index:3;background:var(--color-bg);border-bottom:2px solid var(--color-text);padding:34px 22px 14px',
         )}
       >
         <div style={s('display:flex;align-items:flex-start;justify-content:space-between;gap:12px')}>
@@ -67,7 +68,7 @@ export function TraineeDashboard() {
       <div
         className="scr"
         style={s(
-          'position:absolute;inset:162px 0 0;overflow-y:auto;scrollbar-width:none;padding-bottom:30px',
+          'flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding-bottom:30px',
         )}
       >
         {groups.map((group, index) => (
