@@ -169,7 +169,7 @@ export function ExerciseForm() {
                 'flex:none;width:44px;height:44px;border-radius:10px;background:#f4f5f7;position:relative;overflow:hidden',
               )}
             >
-              {guideSlug && <GuideIllustration slug={guideSlug} fps={1.1} />}
+              {guideSlug && <GuideIllustration slug={guideSlug} still />}
             </div>
             <span style={s('flex:1;font:600 12.5px/1.3;min-width:0')}>
               {guideSlug ? guideName(guideSlug) : T.guidePick}
@@ -328,7 +328,7 @@ export function ExerciseForm() {
                     'flex:none;width:40px;height:40px;border-radius:10px;background:#fff;position:relative;overflow:hidden',
                   )}
                 >
-                  <GuideIllustration slug={entry.slug} fps={0.9} />
+                  <GuideIllustration slug={entry.slug} still />
                 </div>
                 <div style={s('flex:1;display:flex;flex-direction:column;gap:2px;min-width:0')}>
                   <span style={s('font:600 13px/1.3')}>{entry.he}</span>

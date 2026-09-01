@@ -1,15 +1,25 @@
 import { useEffect, useState } from 'react';
 import { s } from '../lib/css';
-import { GUIDE_FRAMES, guideFrame } from '../lib/guide';
+import { GUIDE_FRAMES, guideFrame, guideThumb } from '../lib/guide';
 
 /** Cycles the guide's three SVG frames into a demonstration loop. Frames are
    preloaded before the animation starts, otherwise the first pass stutters
    while each one is fetched. */
-export function GuideIllustration({ slug, fps = 1.6 }: { slug: string; fps?: number }) {
+export function GuideIllustration({
+  slug,
+  fps = 1.6,
+  still = false,
+}: {
+  slug: string;
+  fps?: number;
+  /** Shows the catalogue's thumbnail instead of animating. */
+  still?: boolean;
+}) {
   const [frame, setFrame] = useState(0);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    if (still) return;
     setReady(false);
     let live = true;
     Promise.all(
@@ -24,17 +34,17 @@ export function GuideIllustration({ slug, fps = 1.6 }: { slug: string; fps?: num
     return () => {
       live = false;
     };
-  }, [slug]);
+  }, [slug, still]);
 
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || still) return;
     const timer = setInterval(() => setFrame((f) => f + 1), 1000 / fps);
     return () => clearInterval(timer);
-  }, [ready, fps]);
+  }, [ready, fps, still]);
 
   return (
     <img
-      src={guideFrame(slug, frame)}
+      src={still ? guideThumb(slug) : guideFrame(slug, frame)}
       alt=""
       // The source draws white figures for its own dark theme — a single
       // #fff fill, nothing else — so they are invisible on our light ground.

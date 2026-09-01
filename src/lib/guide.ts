@@ -5,7 +5,13 @@ import hebrew from './guide-he.json';
    exercises, three SVG frames each, which we cycle to animate. Not video:
    the source has none, so this stands in until a real clip is uploaded. */
 const BASE = 'https://bryllim.github.io/workout-guide/frames';
-export const GUIDE_FRAMES = 3;
+
+/** Each exercise ships three SVGs, but they are not three steps of one loop:
+   frame 2 is a heavier-outlined still the catalogue uses as its thumbnail,
+   while 1 and 3 are the two poses that read as movement when alternated.
+   Cycling all three made the bold still flash through the animation. */
+const ANIMATION_FRAMES = [1, 3];
+export const GUIDE_FRAMES = ANIMATION_FRAMES.length;
 
 export interface GuideExercise {
   slug: string;
@@ -27,7 +33,10 @@ export const guideName = (slug: string | null | undefined): string | null => {
 };
 
 export const guideFrame = (slug: string, frame: number) =>
-  `${BASE}/${slug}/frame-${((frame % GUIDE_FRAMES) + GUIDE_FRAMES) % GUIDE_FRAMES + 1}.svg`;
+  `${BASE}/${slug}/frame-${ANIMATION_FRAMES[((frame % GUIDE_FRAMES) + GUIDE_FRAMES) % GUIDE_FRAMES]}.svg`;
+
+/** The still, for anywhere an icon is wanted rather than a demonstration. */
+export const guideThumb = (slug: string) => `${BASE}/${slug}/frame-2.svg`;
 
 const normalise = (value: string) =>
   value
