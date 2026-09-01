@@ -1,60 +1,111 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from './auth/AuthProvider';
-import { RequireRole, homeFor } from './auth/RequireRole';
+import type { Role } from './lib/types';
 import { Splash } from './components/Splash';
 import { ProfileError } from './components/ProfileError';
 import { Landing } from './screens/Landing';
 import { SignIn } from './screens/SignIn';
-import { TraineeDashboard } from './screens/TraineeDashboard';
+import { AccountGate } from './screens/AccountGate';
+import { TraineeHome } from './screens/TraineeHome';
 import { ExerciseDetail } from './screens/ExerciseDetail';
-import { TrainerDashboard } from './screens/TrainerDashboard';
-import { ExerciseCatalogue } from './screens/ExerciseCatalogue';
-import { ExerciseEditor } from './screens/ExerciseEditor';
+import { TrainerTrainees } from './screens/TrainerTrainees';
+import { UserManagement } from './screens/UserManagement';
+import { ExerciseLibrary } from './screens/ExerciseLibrary';
+import { ExerciseForm } from './screens/ExerciseForm';
+import { ProgramBuilder } from './screens/ProgramBuilder';
+
+export const homeFor = (role: Role) => (role === 'trainer' ? '/trainer' : '/trainee');
 
 export function App() {
   return (
     <Routes>
       {/* Public. Google's OAuth branding review rejects a homepage that is
-          only a login screen, so `/` explains the app and `/signin` keeps the
-          design's own sign-in screen. */}
+          only a login screen, so `/` explains the app and `/signin` is the
+          sign-in screen. */}
       <Route path="/" element={<Landing />} />
-      <Route path="/signin" element={<SignInGate />} />
-      <Route path="/app" element={<RoleRedirect />} />
+      <Route path="/signin" element={<Gate>{null}</Gate>} />
+      <Route path="/app" element={<Gate>{null}</Gate>} />
 
-      <Route element={<RequireRole role="trainee" />}>
-        <Route path="/trainee" element={<TraineeDashboard />} />
-        <Route path="/trainee/exercise/:exerciseId" element={<ExerciseDetail />} />
-      </Route>
+      <Route
+        path="/trainee"
+        element={
+          <Gate role="trainee">
+            <TraineeHome />
+          </Gate>
+        }
+      />
+      <Route
+        path="/exercise/:exerciseId"
+        element={
+          <Gate role="trainee">
+            <ExerciseDetail />
+          </Gate>
+        }
+      />
 
-      <Route element={<RequireRole role="trainer" />}>
-        <Route path="/trainer" element={<TrainerDashboard />} />
-        <Route path="/trainer/exercises" element={<ExerciseCatalogue />} />
-        <Route path="/trainer/exercises/:exerciseId" element={<ExerciseEditor />} />
-      </Route>
+      <Route
+        path="/trainer"
+        element={
+          <Gate role="trainer">
+            <TrainerTrainees />
+          </Gate>
+        }
+      />
+      <Route
+        path="/trainer/users"
+        element={
+          <Gate role="trainer">
+            <UserManagement />
+          </Gate>
+        }
+      />
+      <Route
+        path="/trainer/exercises"
+        element={
+          <Gate role="trainer">
+            <ExerciseLibrary />
+          </Gate>
+        }
+      />
+      <Route
+        path="/trainer/exercises/:exerciseId"
+        element={
+          <Gate role="trainer">
+            <ExerciseForm />
+          </Gate>
+        }
+      />
+      <Route
+        path="/trainer/program/new"
+        element={
+          <Gate role="trainer">
+            <ProgramBuilder />
+          </Gate>
+        }
+      />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
 
-/** Where OAuth returns to, and where the landing page's CTA sends a signed-in
-   user: resolve the profile, then hand off to the right dashboard. */
-function RoleRedirect() {
+/** Session, then approval, then role. A trainee who has not been approved
+   never reaches the app — the account status gate sits in front of the role
+   check, so pending and deactivated people see why rather than an empty app. */
+function Gate({ role, children }: { role?: Role; children: React.ReactNode }) {
   const { session, profile, loading, profileError } = useAuth();
 
   if (loading) return <Splash />;
-  if (!session) return <Navigate to="/signin" replace />;
+  if (!session) return <SignIn />;
   if (profileError) return <ProfileError />;
   if (!profile) return <Splash />;
-  return <Navigate to={homeFor(profile.role)} replace />;
-}
 
-/** Already signed in? Skip the sign-in screen. */
-function SignInGate() {
-  const { session, profile, loading, profileError } = useAuth();
+  // Trainers are never gated; they are the ones doing the approving.
+  if (profile.role !== 'trainer' && profile.status !== 'active') {
+    return <AccountGate state={profile.status === 'deactivated' ? 'deactivated' : 'pending'} />;
+  }
 
-  if (loading) return <Splash />;
-  if (profileError) return <ProfileError />;
-  if (session && profile) return <Navigate to={homeFor(profile.role)} replace />;
-  return <SignIn />;
+  if (!role) return <Navigate to={homeFor(profile.role)} replace />;
+  if (profile.role !== role) return <Navigate to={homeFor(profile.role)} replace />;
+  return <>{children}</>;
 }

@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryFn: async (): Promise<Profile> => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, email, full_name, role, created_at')
+        .select('id, email, full_name, role, status, created_at')
         .eq('id', userId!)
         .single();
       if (error) throw error;

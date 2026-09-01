@@ -1,45 +1,43 @@
 import { useState } from 'react';
 import { s } from '../lib/css';
 import { videoSource } from '../lib/video';
-import { useLang } from '../i18n/LangProvider';
-import { Pressable } from './Pressable';
+import { T } from '../i18n/he';
+import { Press } from './Press';
+import { GuideIllustration } from './GuideIllustration';
 
-/** One frame across both states so the growth can interpolate — swapping
-   between two elements would remount and it would jump instead.
-
-   Both heights are lengths rather than an aspect-ratio, because the playing
-   size needs to be a fraction of the *screen*, not of the column width.
-   The poster keeps the design's 16:9 against the column (capped at 390px);
-   playback takes 70% of the visual viewport, sliding the rest down under it. */
+/** One frame across both states so the growth interpolates — swapping between
+   two elements would remount and it would jump. The poster keeps the canvas's
+   16:9; playback takes 70% of the visual viewport, as asked for earlier. */
 const POSTER_H = 'calc(min(100vw, 390px) * 9 / 16)';
 const PLAYING_H = 'calc(var(--app-height, 100vh) * 0.7)';
 
 const FRAME =
-  'position:relative;width:100%;border-bottom:2px solid var(--color-text);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:height .38s cubic-bezier(.22,1,.36,1),background-color .38s ease;height:';
+  'position:relative;width:100%;border-radius:22px;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:height .38s cubic-bezier(.22,1,.36,1),background-color .38s ease;height:';
 
 const CORNER =
-  'flex:none;width:32px;height:32px;border-radius:50%;background:var(--color-bg);border:1px solid var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .14s ease';
+  'position:absolute;top:14px;width:32px;height:32px;border-radius:50%;background:#fff;box-shadow:var(--shadow-knob);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;transition:transform .14s ease';
 
-interface Props {
+export function VideoEmbed({
+  url,
+  guideSlug,
+  onBack,
+}: {
   url: string | null;
-  /** The artboard has no back affordance; the app needs one. */
+  /** Shown when there is no uploaded clip: an animated illustration loop. */
+  guideSlug?: string | null;
   onBack?: () => void;
-}
-
-export function VideoEmbed({ url, onBack }: Props) {
-  const { tr } = useLang();
+}) {
   const [playing, setPlaying] = useState(false);
   const source = videoSource(url);
   const live = playing && source !== null;
 
   return (
     <div
-      className={live ? undefined : 'grayscale'}
       style={s(
         FRAME +
           (live
             ? `${PLAYING_H};background:#000`
-            : `${POSTER_H};background:var(--color-neutral-300)`),
+            : `${POSTER_H};background:${guideSlug && !source ? '#fff' : '#dfe1e4'}`),
       )}
     >
       {live ? (
@@ -47,7 +45,7 @@ export function VideoEmbed({ url, onBack }: Props) {
           {source.kind === 'iframe' ? (
             <iframe
               src={source.src}
-              title={tr.techniqueWord}
+              title={T.technique}
               allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               style={s('position:absolute;inset:0;width:100%;height:100%;border:0')}
@@ -60,67 +58,62 @@ export function VideoEmbed({ url, onBack }: Props) {
               style={s('position:absolute;inset:0;width:100%;height:100%;object-fit:contain')}
             />
           )}
-          <Pressable
+          <Press
             onClick={() => setPlaying(false)}
-            style={s(CORNER + ';position:absolute;top:16px;inset-inline-end:18px;z-index:2')}
+            style={s(CORNER + ';left:16px')}
             activeStyle={s('transform:scale(.9)')}
           >
             <CloseIcon />
-          </Pressable>
+          </Press>
         </>
       ) : (
         <>
-          <div
-            style={s(
-              'position:absolute;inset:0;background:repeating-linear-gradient(45deg,color-mix(in srgb, var(--color-text) 5%, transparent) 0 11px,transparent 11px 22px)',
-            )}
-          />
-          <div
-            style={s(
-              'position:absolute;top:16px;left:18px;right:18px;display:flex;align-items:center;gap:10px;z-index:2',
-            )}
-          >
-            {onBack && (
-              <Pressable
-                onClick={onBack}
-                style={s(CORNER)}
-                hoverStyle={s('background:var(--color-neutral-200)')}
-                activeStyle={s('transform:scale(.9)')}
-              >
-                <svg
-                  className="dir-icon"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                >
-                  <path d="m15 6-6 6 6 6" />
-                </svg>
-              </Pressable>
-            )}
-            <span
+          {/* The illustration is a stand-in, not a backdrop: once a real clip
+              exists it owns the poster, so the play button is not sitting on
+              top of an unrelated animation. */}
+          {guideSlug && !source ? (
+            <GuideIllustration slug={guideSlug} />
+          ) : (
+            <div
               style={s(
-                'font:600 9.5px/1 Archivo,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-800);white-space:nowrap',
+                'position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(20,20,25,.04) 0 11px,transparent 11px 22px)',
               )}
+            />
+          )}
+          <span style={s('position:absolute;top:14px;right:16px;font:600 9.5px/1;color:#5c5f66')}>
+            {source ? T.technique : guideSlug ? T.illustration : T.noVideo}
+          </span>
+          {onBack && (
+            <Press
+              onClick={onBack}
+              style={s(CORNER + ';left:16px')}
+              activeStyle={s('transform:scale(.9)')}
             >
-              {source ? tr.techniqueWord : tr.noVideo}
-            </span>
-          </div>
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#17181c"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              >
+                <path d="m9 6 6 6-6 6" />
+              </svg>
+            </Press>
+          )}
           {source && (
-            <Pressable
+            <Press
               onClick={() => setPlaying(true)}
               style={s(
-                'position:relative;width:64px;height:64px;border-radius:50%;background:var(--color-bg);border:2px solid var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .16s ease',
+                'position:relative;width:60px;height:60px;border-radius:50%;background:#e0231a;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px -6px rgba(224,35,26,.6);transition:transform .16s ease',
               )}
               activeStyle={s('transform:scale(.92)')}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="#fff">
                 <path d="M8 5.5v13l11-6.5z" />
               </svg>
-            </Pressable>
+            </Press>
           )}
         </>
       )}
@@ -135,7 +128,7 @@ function CloseIcon() {
       height="14"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
+      stroke="#17181c"
       strokeWidth="2.2"
       strokeLinecap="round"
     >

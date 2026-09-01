@@ -1,25 +1,12 @@
 import { useState } from 'react';
 import { s } from '../lib/css';
+import { T } from '../i18n/he';
 import { useAuth } from '../auth/AuthProvider';
-import { useLang } from '../i18n/LangProvider';
 import { Screen } from '../components/Screen';
-import { Pressable } from '../components/Pressable';
-import { LangToggle } from '../components/LangToggle';
-import { ACTION_ACTIVE, ACTION_HOVER, action } from '../components/CircleButton';
-
-/** Decorative backdrop behind the blur — the design's own ghost fixture. */
-const GHOST = [
-  { name: 'Incline Dumbbell Press', value: '32.5 kg × 9' },
-  { name: 'Flat Barbell Bench Press', value: '80 kg × 6' },
-  { name: 'Cable Fly', value: '15 kg × 14' },
-  { name: 'Back Squat', value: '110 kg × 5' },
-  { name: 'Romanian Deadlift', value: '90 kg × 8' },
-  { name: 'Leg Press', value: '180 kg × 12' },
-];
+import { Press } from '../components/Press';
 
 export function SignIn() {
   const { signInWithGoogle } = useAuth();
-  const { tr } = useLang();
   const [busy, setBusy] = useState(false);
 
   const onSignIn = async () => {
@@ -33,73 +20,52 @@ export function SignIn() {
 
   return (
     <Screen>
-      <div style={s('position:absolute;inset:0;filter:blur(6px);opacity:.55;padding:34px 22px')}>
-        <span style={s('font:800 22px/1.05 Archivo,sans-serif')}>Marcus Osei</span>
-        <div style={s('height:2px;background:var(--color-text);margin:14px 0')} />
-        {GHOST.map((row) => (
-          <div
-            key={row.name}
-            style={s(
-              'display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid color-mix(in srgb, var(--color-text) 16%, transparent)',
-            )}
-          >
-            <span style={s('font:600 14px/1 Archivo,sans-serif')}>{row.name}</span>
-            <span style={s('font:700 14px/1 Archivo,sans-serif')}>{row.value}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Physical `right`, not `inset-inline-end` — the latter flips the
-          control to the other corner the instant you switch language. */}
-      <LangToggle style={{ position: 'absolute', top: '26px', right: '22px', zIndex: 10 }} />
-
       <div
         style={s(
-          'position:absolute;inset:0;background:color-mix(in srgb, var(--color-bg) 55%, transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:26px;animation:fadeIn .3s ease both',
+          'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:26px',
         )}
       >
         <div
           style={s(
-            'width:100%;background:var(--color-bg);border:1px solid var(--color-text);padding:30px 24px 26px;display:flex;flex-direction:column;gap:22px;animation:cardIn .38s cubic-bezier(.22,1,.36,1) both;box-shadow:var(--shadow-md)',
+            'width:100%;background:#fff;border-radius:24px;padding:34px 24px 28px;display:flex;flex-direction:column;gap:20px;box-shadow:0 20px 50px -18px rgba(20,20,25,.3);animation:cardIn .38s cubic-bezier(.22,1,.36,1) both',
           )}
         >
-          <div style={s('display:flex;flex-direction:column;gap:10px')}>
-            <span
-              style={s(
-                'font:600 9.5px/1 Archivo,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--color-accent-700)',
-              )}
-            >
-              {tr.perfTracker}
-            </span>
-            <span style={s('font:800 29px/1.06 Archivo,sans-serif;letter-spacing:-.025em')}>
-              {tr.signInLine1}
-              <br />
-              {tr.signInLine2}
-            </span>
+          <div
+            style={s(
+              'display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center',
+            )}
+          >
+            {/* The app mark, so sign-in and the home-screen icon agree. */}
+            <svg width="60" height="60" viewBox="0 0 64 64" style={s('margin-bottom:6px')} aria-hidden="true">
+              <rect width="64" height="64" rx="15" fill="#f4f5f7" />
+              <g fill="#17181c">
+                <rect x="6" y="19" width="9" height="26" rx="3.5" />
+                <rect x="17" y="25" width="6" height="14" rx="2.5" />
+                <rect x="41" y="25" width="6" height="14" rx="2.5" />
+                <rect x="49" y="19" width="9" height="26" rx="3.5" />
+              </g>
+              <path
+                d="M23 38 L29.5 31.5 L36 35 L41 27"
+                fill="none"
+                stroke="#e0231a"
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span style={s('font:800 22px/1.2')}>{T.signInTitle}</span>
+            <span style={s('font:400 12.5px/1.55;color:#5c5f66')}>{T.signInSubtitle}</span>
           </div>
-          <div className="hr" />
-          <Pressable
-            className="btn btn-primary btn-block"
+          <Press
             onClick={onSignIn}
             disabled={busy}
-            style={s(action(56))}
-            hoverStyle={s(ACTION_HOVER)}
-            activeStyle={s(ACTION_ACTIVE)}
+            style={s(
+              'height:54px;border-radius:16px;background:#e0231a;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:transform .14s cubic-bezier(.34,1.5,.5,1)',
+            )}
+            activeStyle={s('transform:scale(.97)')}
           >
-            <span style={s('font:700 15px/1 Archivo,sans-serif')}>{tr.continueGoogle}</span>
-            <svg
-              className="dir-icon"
-              width="19"
-              height="19"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-            >
-              <path d="M5 12h13M13 6l6 6-6 6" />
-            </svg>
-          </Pressable>
+            <span style={s('font:700 15px/1')}>{T.signInGoogle}</span>
+          </Press>
         </div>
       </div>
     </Screen>

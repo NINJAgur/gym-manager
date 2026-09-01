@@ -1,15 +1,13 @@
 import { s } from '../lib/css';
+import { T } from '../i18n/he';
 import { useAuth } from '../auth/AuthProvider';
-import { useLang } from '../i18n/LangProvider';
 import { Screen } from './Screen';
-import { Pressable } from './Pressable';
-import { ACTION_ACTIVE, ACTION_HOVER, action } from './CircleButton';
+import { Press } from './Press';
 
 /** Signed in but the profile row is unreadable — schema not deployed, RLS
    blocking, or no row for this user. Without this the app splashes forever. */
 export function ProfileError() {
   const { profileError, signOut } = useAuth();
-  const { tr } = useLang();
 
   return (
     <Screen>
@@ -20,34 +18,22 @@ export function ProfileError() {
       >
         <div
           style={s(
-            'width:100%;background:var(--color-bg);border:1px solid var(--color-text);padding:30px 24px 26px;display:flex;flex-direction:column;gap:22px;box-shadow:var(--shadow-md)',
+            'width:100%;background:#fff;border-radius:24px;padding:30px 24px 26px;display:flex;flex-direction:column;gap:16px;box-shadow:0 20px 50px -18px rgba(20,20,25,.3)',
           )}
         >
-          <div style={s('display:flex;flex-direction:column;gap:10px')}>
-            <span
-              style={s(
-                'font:600 9.5px/1 Archivo,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--color-accent-700)',
-              )}
-            >
-              {tr.perfTracker}
-            </span>
-            <span style={s('font:800 26px/1.06 Archivo,sans-serif;letter-spacing:-.025em')}>
-              {tr.profileMissing}
-            </span>
-            <span style={s('font:400 12px/1.5 Archivo,sans-serif;color:var(--color-neutral-700)')}>
-              {profileError?.message ?? ''}
-            </span>
-          </div>
-          <div className="hr" />
-          <Pressable
-            className="btn btn-primary btn-block"
+          <span style={s('font:800 20px/1.3')}>{T.profileMissing}</span>
+          <span style={s('font:400 12px/1.6;color:#8b8f96')} dir="ltr">
+            {profileError?.message ?? ''}
+          </span>
+          <Press
             onClick={() => void signOut()}
-            style={s(action(52))}
-            hoverStyle={s(ACTION_HOVER)}
-            activeStyle={s(ACTION_ACTIVE)}
+            style={s(
+              'height:50px;border-radius:16px;background:#eceef0;color:#5c5f66;display:flex;align-items:center;justify-content:center;font:700 14px/1;cursor:pointer',
+            )}
+            activeStyle={s('transform:scale(.97)')}
           >
-            <span style={s('font:700 15px/1 Archivo,sans-serif')}>{tr.signOut}</span>
-          </Pressable>
+            {T.signOut}
+          </Press>
         </div>
       </div>
     </Screen>

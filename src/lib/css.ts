@@ -2,20 +2,15 @@ import type { CSSProperties } from 'react';
 
 const cache = new Map<string, CSSProperties>();
 
-/** The canvas authored type for a 390px artboard viewed at 1:1, which leaves
- * the 9-11px labels hard to read on a real screen.
- *
- * The boost cannot be uniform. Small labels need a lot of it; display sizes
- * need almost none, and overscaling them makes headings wrap and shout. So
- * each size is emitted against one of three variables chosen by how large it
- * already is, letting the ramp differ per script — Archivo needs its large end
- * held back where Noto Sans Hebrew does not. Values in i18n/LangProvider. */
-const bucket = (px: number) => (px < 13 ? 'sm' : px <= 24 ? 'md' : 'lg');
-const scaled = (px: string) => `calc(${px}px * var(--type-${bucket(Number(px))}, 1))`;
+/** The canvas is a 390px artboard viewed at 1:1, so its type is small on a
+ * real screen. Sizes are emitted against --type-scale (theme.css) rather than
+ * baked in, so the whole app retunes from one number. */
+const scaled = (px: string) => `calc(${px}px * var(--type-scale, 1))`;
 
-/** `font: 600 10px/1.2 Archivo,sans-serif`. The shorthand cannot carry a
- * calc() in its size slot portably, so it is split into longhands. */
-const FONT_SHORTHAND = /^(\d+)\s+([\d.]+)px(?:\/([\d.]+))?\s+(.+)$/;
+/** `font: 600 12.5px/1.2` — the shorthand cannot carry a calc() in its size
+ * slot portably, so it is split into longhands. The canvas omits the family
+ * (everything inherits Noto Sans Hebrew), so family is optional here. */
+const FONT_SHORTHAND = /^(\d+)\s+([\d.]+)px(?:\/([\d.]+))?(?:\s+(.+))?$/;
 
 function expandFont(value: string): Record<string, string> | null {
   const match = FONT_SHORTHAND.exec(value);
@@ -25,14 +20,14 @@ function expandFont(value: string): Record<string, string> | null {
     fontWeight: weight,
     fontSize: scaled(size),
     ...(lineHeight ? { lineHeight } : null),
-    fontFamily: family,
+    ...(family ? { fontFamily: family } : null),
   };
 }
 
 /** Parse a CSS declaration string into a React style object.
    The design canvas expressed every style as inline CSS text; keeping those
    strings verbatim and parsing them is what guarantees the rendered styles
-   match the artboard exactly, rather than a hand transcription that drifts. */
+   match the artboard, rather than a hand transcription that drifts. */
 export function s(text: string): CSSProperties {
   const hit = cache.get(text);
   if (hit) return hit;
@@ -65,7 +60,7 @@ export function s(text: string): CSSProperties {
   return style;
 }
 
-/** v2's accordion helpers, used by both the trainee groups and trainer cards. */
+/** The canvas's accordion helpers. */
 export const panelStyle = (open: boolean): CSSProperties =>
   s(
     'display:grid;grid-template-rows:' +

@@ -1,10 +1,12 @@
 export type Role = 'trainee' | 'trainer';
+export type AccountStatus = 'pending' | 'active' | 'deactivated';
 
 export interface Profile {
   id: string;
   email: string | null;
   full_name: string | null;
   role: Role;
+  status: AccountStatus;
   created_at: string;
 }
 
@@ -15,17 +17,34 @@ export interface Exercise {
   description: string | null;
   video_url: string | null;
   machine_number: string | null;
+  /** Illustration fallback from the open Workout Guide catalogue. */
+  guide_slug: string | null;
 }
 
-/** An assigned exercise joined with the numbers the trainer most recently set. */
-export interface AssignedExercise extends Exercise {
-  assigned_at: string;
-  weight: number | null;
-  reps: number | null;
-  logged_at: string | null;
+/** One line of a program: an exercise plus the numbers set for it. */
+export interface ProgramItem {
+  id: string;
+  program_id: string;
+  exercise_id: string;
+  sets: number;
+  reps: number;
+  weight: number;
+  position: number;
+  exercise: Exercise;
 }
 
-/** One entry in an exercise's record history — written by the trainer. */
+export interface Program {
+  id: string;
+  trainee_id: string;
+  name: string;
+  /** 0=Sunday .. 6=Saturday, or null when the program is not tied to a day. */
+  day_of_week: number | null;
+  position: number;
+  created_at: string;
+  items: ProgramItem[];
+}
+
+/** Written whenever a weight is changed, so the chart has a series. */
 export interface PerformanceLog {
   id: string;
   trainee_id: string;
@@ -39,12 +58,8 @@ export interface TraineeOverview {
   id: string;
   full_name: string | null;
   email: string | null;
-  exercise_count: number;
+  status: AccountStatus;
+  created_at: string;
+  program_count: number;
   last_logged_at: string | null;
-}
-
-/** A category and the exercises under it, for the trainee's accordion. */
-export interface ExerciseGroup {
-  name: string;
-  items: AssignedExercise[];
 }

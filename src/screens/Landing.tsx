@@ -1,156 +1,113 @@
 import { useNavigate } from 'react-router-dom';
 import { s } from '../lib/css';
 import { useAuth } from '../auth/AuthProvider';
-import { useLang } from '../i18n/LangProvider';
-import { homeFor } from '../auth/RequireRole';
-import { Pressable } from '../components/Pressable';
-import { LangToggle } from '../components/LangToggle';
-import { ACTION_ACTIVE, ACTION_HOVER, action } from '../components/CircleButton';
+import { homeFor } from '../App';
+import { Press } from '../components/Press';
 import { APP_NAME } from '../lib/app';
 
-/** The public homepage. Deliberately readable without signing in: Google's
-   OAuth branding review rejects a homepage that is just a login screen, and
-   requires it to explain what the app does under a matching app name. */
+const POINTS = [
+  'המאמן בונה תוכנית אימון — כללית או מפוצלת לפי ימים — ומשייך אותה למתאמן.',
+  'המתאמן רואה את התוכנית כטבלה: תרגיל, סטים, חזרות ומשקל, בדיוק כמו בגיליון.',
+  'לכל תרגיל יש סרטון הדגמה, תיאור ומספר מכשיר, כך שאין צורך לזכור דגשים.',
+  'המאמן קובע חזרות ומשקל, המתאמן מעדכן משקל בלבד, וגרף מציג את ההתקדמות.',
+];
+
+/** The public homepage. Readable without signing in: Google's OAuth branding
+   review rejects a homepage that is only a login screen. */
 export function Landing() {
   const { session, profile } = useAuth();
-  const { tr, lang, dir, fontFamily } = useLang();
   const navigate = useNavigate();
-
-  const points = [tr.sellPoint1, tr.sellPoint2, tr.sellPoint3, tr.sellPoint4];
 
   return (
     <div
-      dir={dir}
-      data-lang={lang}
+      dir="rtl"
       style={{
         position: 'absolute',
         inset: 0,
         overflowY: 'auto',
-        background: 'color-mix(in srgb, var(--color-text) 9%, var(--color-bg))',
-        fontFamily,
+        background: 'var(--ground)',
       }}
     >
       <div
         style={s(
-          'max-width:720px;margin:0 auto;min-height:100%;background:var(--color-bg);padding:34px 22px 60px;display:flex;flex-direction:column;gap:34px',
+          'max-width:720px;margin:0 auto;min-height:100%;background:#f4f5f7;padding:34px 22px 60px;display:flex;flex-direction:column;gap:28px',
         )}
       >
-        <header style={s('display:flex;align-items:center;justify-content:space-between;gap:16px')}>
-          <div style={s('display:flex;align-items:center;gap:11px;min-width:0')}>
-            {/* Inlined rather than <img src="/favicon.svg">: the file has no
-                intrinsic size, so Chromium renders it as a broken image. */}
-            <svg width="34" height="34" viewBox="0 0 64 64" style={s('flex:none')} aria-hidden="true">
-              <rect x="4" y="18" width="9" height="28" fill="var(--color-text)" />
-              <rect x="15" y="24" width="6" height="16" fill="var(--color-text)" />
-              <rect x="43" y="24" width="6" height="16" fill="var(--color-text)" />
-              <rect x="51" y="18" width="9" height="28" fill="var(--color-text)" />
-              <path
-                d="M21 38 L28 31 L35 35 L43 26"
-                fill="none"
-                stroke="var(--color-accent)"
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span
-              style={s('font:800 17px/1.05 Archivo,sans-serif;letter-spacing:-.02em')}
-            >
-              {APP_NAME}
-            </span>
-          </div>
-          <LangToggle />
+        <header style={s('display:flex;align-items:center;gap:11px')}>
+          {/* The app mark: a dumbbell whose bar is a rising progress line. */}
+          <svg width="46" height="46" viewBox="0 0 64 64" style={s('flex:none')} aria-hidden="true">
+            <rect width="64" height="64" rx="15" fill="#fff" />
+            <g fill="#17181c">
+              <rect x="6" y="19" width="9" height="26" rx="3.5" />
+              <rect x="17" y="25" width="6" height="14" rx="2.5" />
+              <rect x="41" y="25" width="6" height="14" rx="2.5" />
+              <rect x="49" y="19" width="9" height="26" rx="3.5" />
+            </g>
+            <path
+              d="M23 38 L29.5 31.5 L36 35 L41 27"
+              fill="none"
+              stroke="#e0231a"
+              strokeWidth="6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span style={s('font:800 18px/1.1')}>{APP_NAME}</span>
         </header>
 
-        <div style={s('height:2px;background:var(--color-text)')} />
-
-        <section style={s('display:flex;flex-direction:column;gap:14px;animation:fadeUp .4s both')}>
-          <span
-            style={s(
-              'font:600 9.5px/1 Archivo,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--color-accent-700)',
-            )}
-          >
-            {tr.perfTracker}
-          </span>
-          <h1 style={s('font:800 34px/1.06 Archivo,sans-serif;letter-spacing:-.03em;margin:0')}>
-            {tr.landingHeadline}
-          </h1>
-          <p
-            style={s(
-              'font:400 15px/1.65 Archivo,sans-serif;color:var(--color-neutral-700);margin:0;text-wrap:pretty',
-            )}
-          >
-            {tr.landingIntro}
+        <section style={s('display:flex;flex-direction:column;gap:12px;animation:fadeUp .4s both')}>
+          <h1 style={s('font:800 30px/1.15;margin:0')}>המאמן קובע. אתה מתאמן.</h1>
+          <p style={s('font:400 15px/1.7;color:#5c5f66;margin:0;text-wrap:pretty')}>
+            כלי פרטי למאמן אישי ולמתאמנים שלו. המאמן בונה תוכניות אימון ומשייך אותן; המתאמן פותח
+            את האפליקציה בחדר הכושר ורואה בדיוק מה לעשות, עם סרטון הדגמה והיסטוריית התקדמות.
           </p>
         </section>
 
-        <section style={s('display:flex;flex-direction:column;gap:0')}>
-          {points.map((point, index) => (
+        <section style={s('display:flex;flex-direction:column;gap:10px')}>
+          {POINTS.map((point, index) => (
             <div
               key={index}
               style={s(
-                'display:flex;gap:13px;padding:15px 0;border-bottom:1px solid color-mix(in srgb, var(--color-text) 16%, transparent);animation:fadeUp .4s both;animation-delay:' +
+                'display:flex;gap:12px;padding:14px;border-radius:16px;background:#fff;box-shadow:var(--shadow-card);animation:fadeUp .4s both;animation-delay:' +
                   index * 60 +
                   'ms',
               )}
             >
               <span
+                className="num"
                 style={s(
-                  'flex:none;width:22px;height:22px;background:var(--color-accent);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font:700 11px/1 Archivo,sans-serif',
+                  'flex:none;width:24px;height:24px;border-radius:8px;background:#fdeceb;color:#b81b13;display:flex;align-items:center;justify-content:center;font:700 11px/1',
                 )}
               >
                 {index + 1}
               </span>
-              <span
-                style={s(
-                  'font:400 14px/1.6 Archivo,sans-serif;color:var(--color-neutral-700);text-wrap:pretty',
-                )}
-              >
-                {point}
-              </span>
+              <span style={s('font:400 13.5px/1.6;color:#5c5f66;text-wrap:pretty')}>{point}</span>
             </div>
           ))}
         </section>
 
-        <Pressable
-          className="btn btn-primary btn-block"
-          onClick={() =>
-            navigate(session && profile ? homeFor(profile.role) : '/signin')
-          }
-          style={s(action(58))}
-          hoverStyle={s(ACTION_HOVER)}
-          activeStyle={s(ACTION_ACTIVE)}
+        <Press
+          onClick={() => navigate(session && profile ? homeFor(profile.role) : '/app')}
+          style={s(
+            'height:56px;border-radius:18px;background:#e0231a;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .14s cubic-bezier(.34,1.5,.5,1)',
+          )}
+          activeStyle={s('transform:scale(.97)')}
         >
-          <span style={s('font:700 16px/1 Archivo,sans-serif')}>
-            {session && profile ? tr.openApp : tr.continueGoogle}
+          <span style={s('font:700 15.5px/1')}>
+            {session && profile ? 'כניסה לאפליקציה' : 'כניסה עם Google'}
           </span>
-          <svg
-            className="dir-icon"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-          >
-            <path d="M5 12h13M13 6l6 6-6 6" />
-          </svg>
-        </Pressable>
+        </Press>
 
         <footer
           style={s(
-            'margin-top:auto;padding-top:22px;border-top:1px solid color-mix(in srgb, var(--color-text) 16%, transparent);display:flex;flex-wrap:wrap;gap:14px;align-items:baseline;justify-content:space-between',
+            'margin-top:auto;padding-top:20px;border-top:1px solid #dfe1e4;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:baseline',
           )}
         >
-          <span style={s('font:400 11.5px/1.5 Archivo,sans-serif;color:var(--color-neutral-600)')}>
-            {tr.landingFooter}
+          <span style={s('font:400 11.5px/1.5;color:#8b8f96')}>
+            התחבר עם חשבון Google שהמאמן שלך רשם.
           </span>
-          <a
-            href="/privacy"
-            style={s('font:600 11.5px/1.5 Archivo,sans-serif;color:var(--color-accent-700)')}
-          >
-            {tr.privacyPolicy}
+          <a href="/privacy" style={s('font:600 11.5px/1.5;color:#b81b13')}>
+            מדיניות פרטיות
           </a>
         </footer>
       </div>

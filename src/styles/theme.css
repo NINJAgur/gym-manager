@@ -1,0 +1,198 @@
+/* v3 design tokens, taken from the canvas's <helmet> block and its inline
+   styles. A different system from the previous build: rounded surfaces, soft
+   shadows, one Hebrew typeface, RTL only. */
+
+:root {
+  --ground: #e9eaec; /* outside the phone frame */
+  --bg: #f4f5f7; /* screen background */
+  --card: #ffffff;
+  --sunken: #eceef0; /* pressed rows, avatar wells */
+
+  --text: #17181c;
+  --muted: #5c5f66;
+  --dim: #8b8f96;
+  --faint: #9ea1a7;
+  --hairline: #f0f1f2;
+  --border: #dfe1e4;
+  --border-strong: #c9cbce;
+
+  --accent: #e0231a;
+  --accent-dark: #b81b13;
+  --accent-tint: #fdeceb;
+
+  --ok-bg: #e6f6ea;
+  --ok-fg: #1c8a3e;
+  --warn-bg: #fff3d6;
+  --warn-fg: #946200;
+
+  --shadow-card: 0 8px 22px -16px rgba(20, 20, 25, 0.22);
+  --shadow-raised: 0 8px 24px -16px rgba(20, 20, 25, 0.2);
+  --shadow-sheet: 0 -12px 40px -10px rgba(20, 20, 25, 0.3);
+  --shadow-nav: 0 14px 30px -10px rgba(20, 20, 25, 0.5);
+  --shadow-knob: 0 4px 10px -6px rgba(20, 20, 25, 0.3);
+  --shadow-accent: 0 8px 18px -6px rgba(224, 35, 26, 0.55);
+
+  /* Scaled at the root rather than per declaration: the canvas is a 390px
+     artboard viewed at 1:1, which is small on a real screen. */
+  --type-scale: 1.3;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--text);
+  font-family: 'Noto Sans Hebrew', system-ui, sans-serif;
+}
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+a {
+  color: var(--accent);
+}
+a:hover {
+  color: var(--accent-dark);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sheetUp {
+  from {
+    transform: translateY(102%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes lineGrow {
+  from {
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+  }
+  to {
+    stroke-dasharray: 400;
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.scr::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+.scr {
+  scrollbar-width: none;
+}
+
+/* The app tracks the visual viewport so an open keyboard shrinks the shell
+   rather than hiding the action bar behind itself. See lib/viewport.ts. */
+html,
+body {
+  height: 100%;
+}
+#root {
+  height: var(--app-height, 100%);
+  overflow: hidden;
+}
+
+/* A measurement is an LTR island: "80 ק"ג × 6" reads wrong otherwise, since
+   the RTL context lays the number and its unit out right to left. */
+.num {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Inputs inherit the typeface and sit on the design's rounded shells. */
+input,
+textarea,
+button {
+  font-family: inherit;
+  color: var(--text);
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--faint);
+}
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+}
+.field-input {
+  width: 100%;
+  height: calc(48px * var(--type-scale));
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 0 14px;
+  font-weight: 500;
+  font-size: calc(14px * var(--type-scale));
+}
+textarea.field-input {
+  height: auto;
+  padding: 12px 14px;
+  font-weight: 400;
+  font-size: calc(13.5px * var(--type-scale));
+  line-height: 1.6;
+  resize: none;
+}
+.cell-input {
+  height: calc(32px * var(--type-scale));
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  text-align: center;
+  font-weight: 600;
+  font-size: calc(12px * var(--type-scale));
+  padding: 0 2px;
+}
+
+.hnav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--dim);
+  transition: color 0.16s ease;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.hnav-item:hover {
+  color: #c9cbce;
+}
+.hnav-item[data-active='true'] {
+  color: #fff;
+}

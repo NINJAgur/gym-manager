@@ -2,28 +2,30 @@ import { useState, type CSSProperties, type ReactNode } from 'react';
 
 interface Props {
   style: CSSProperties;
-  /** The design's `style-hover` / `style-active` attributes, as objects. */
-  hoverStyle?: CSSProperties;
+  /** The canvas's `style-active`, applied while pressed. */
   activeStyle?: CSSProperties;
+  hoverStyle?: CSSProperties;
   className?: string;
+  title?: string;
   onClick?: () => void;
   disabled?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
-/** The canvas resolved `style-hover`/`style-active` into the inline style at
-   render time. Inline styles beat class rules, so the app does the same. */
-export function Pressable({
+/** The canvas resolved `style-active` into the inline style at render time.
+   Inline styles beat class rules, so the app does the same. */
+export function Press({
   style,
-  hoverStyle,
   activeStyle,
+  hoverStyle,
   className,
+  title,
   onClick,
   disabled,
   children,
 }: Props) {
-  const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
+  const [hover, setHover] = useState(false);
 
   return (
     <div
@@ -31,11 +33,12 @@ export function Pressable({
       role="button"
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
+      title={title}
       style={{
         ...style,
         ...(hover && !disabled ? hoverStyle : null),
         ...(active && !disabled ? activeStyle : null),
-        ...(disabled ? { opacity: 0.45, cursor: 'not-allowed' } : null),
+        ...(disabled ? { opacity: 0.5, cursor: 'not-allowed' } : null),
       }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {

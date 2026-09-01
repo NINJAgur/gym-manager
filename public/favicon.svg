@@ -1,15 +1,15 @@
-<!-- width/height as well as viewBox: without intrinsic dimensions this renders
-     as a broken image inside an <img>, which the landing page header uses. -->
+<!-- A dumbbell whose bar is a rising progress line: gym and tracking in one
+     mark. Softened for v3 — rounded plates, rounded joins, the new palette —
+     but the same composition. At 16px the zigzag flattens into a bar, so it
+     degrades to a plain dumbbell rather than to noise. -->
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-  <!-- Dumbbell whose bar is a rising progress line: gym and tracking in one
-       mark. Plates in --color-text, line in the accent. Square corners, since
-       the design system sets --radius-md: 0. At 16px the zigzag flattens into
-       a bar, so it degrades to a plain dumbbell rather than to noise. -->
-  <rect width="64" height="64" fill="#f3f2f2"/>
-  <rect x="4"  y="18" width="9" height="28" fill="#201e1d"/>
-  <rect x="15" y="24" width="6" height="16" fill="#201e1d"/>
-  <rect x="43" y="24" width="6" height="16" fill="#201e1d"/>
-  <rect x="51" y="18" width="9" height="28" fill="#201e1d"/>
-  <path d="M21 38 L28 31 L35 35 L43 26" fill="none" stroke="#e0231a" stroke-width="6"
-        stroke-linecap="round" stroke-linejoin="round"/>
+  <rect width="64" height="64" rx="15" fill="#f4f5f7"/>
+  <g fill="#17181c">
+    <rect x="6"  y="19" width="9" height="26" rx="3.5"/>
+    <rect x="17" y="25" width="6" height="14" rx="2.5"/>
+    <rect x="41" y="25" width="6" height="14" rx="2.5"/>
+    <rect x="49" y="19" width="9" height="26" rx="3.5"/>
+  </g>
+  <path d="M23 38 L29.5 31.5 L36 35 L41 27" fill="none" stroke="#e0231a"
+        stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
