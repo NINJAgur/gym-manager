@@ -12,6 +12,8 @@ interface AuthValue {
   /** Set when the profile row can't be read — missing schema, RLS, no row. */
   profileError: Error | null;
   signInWithGoogle: () => Promise<void>;
+  /** Emails a one-time sign-in link. */
+  sendSignInLink: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -67,6 +69,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           provider: 'google',
           // /app resolves the role and forwards; `/` is the public homepage.
           options: { redirectTo: `${window.location.origin}/app` },
+        });
+        if (error) throw error;
+      },
+      sendSignInLink: async (email) => {
+        const { error } = await supabase.auth.signInWithOtp({
+          email: email.trim(),
+          // A link rather than a code: editing the template to carry the code
+          // needs custom SMTP, which is not set up yet. Swap back when it is.
+          options: {
+            shouldCreateUser: true,
+            emailRedirectTo: `${window.location.origin}/app`,
+          },
         });
         if (error) throw error;
       },

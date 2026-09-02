@@ -93,9 +93,9 @@ export function Landing() {
           )}
           activeStyle={s('transform:scale(.97)')}
         >
-          <span style={s('font:700 15.5px/1')}>
-            {session && profile ? 'כניסה לאפליקציה' : 'כניסה עם Google'}
-          </span>
+          {/* The same words either way now that sign-in offers two methods:
+              the button leads to the choice rather than naming one. */}
+          <span style={s('font:700 15.5px/1')}>כניסה לאפליקציה</span>
         </Press>
 
         <footer
@@ -104,7 +104,7 @@ export function Landing() {
           )}
         >
           <span style={s('font:400 11.5px/1.5;color:#8b8f96')}>
-            התחבר עם חשבון Google שהמאמן שלך רשם.
+            התחברות עם חשבון Google או עם קוד לדוא״ל. המאמן מאשר גישה לחשבון חדש.
           </span>
           <a href="/privacy" style={s('font:600 11.5px/1.5;color:#b81b13')}>
             מדיניות פרטיות
