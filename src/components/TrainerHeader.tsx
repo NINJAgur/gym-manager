@@ -24,7 +24,7 @@ export function TrainerHeader({ title, children }: { title: string; children?: R
             onClick={() => setMenuOpen(true)}
             title={T.signOut}
             style={s(
-              'flex:none;width:44px;height:44px;border-radius:50%;background:#eceef0;display:flex;align-items:center;justify-content:center;font:700 13px/1;color:#5c5f66;cursor:pointer;transition:transform .14s ease',
+              'flex:none;width:44px;height:44px;border-radius:50%;background:#e0231a;display:flex;align-items:center;justify-content:center;font:700 13px/1;color:#fff;cursor:pointer;box-shadow:0 6px 14px -8px rgba(224,35,26,.7);transition:transform .14s ease',
             )}
             activeStyle={s('transform:scale(.94)')}
           >

@@ -5,7 +5,7 @@ import { Press } from './Press';
 interface Props {
   label: string;
   value: number;
-  /** 2.5 for weight, 1 for reps. */
+  /** Weight and reps both move by 1. */
   step?: number;
   /** Round buttons: 38 on the trainee's inline row, 48 in the trainer's panel. */
   size?: number;
@@ -42,7 +42,7 @@ const plus = (px: number) => (
 
 /** The canvas's paired round steppers: a white knob to decrease, an accent
    one to increase, the value between them. */
-export function Stepper({ label, value, step = 2.5, size = 48, onChange }: Props) {
+export function Stepper({ label, value, step = 1, size = 48, onChange }: Props) {
   const icon = Math.round(size * 0.36);
 
   return (

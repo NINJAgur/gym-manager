@@ -377,7 +377,6 @@ function ItemRow({
           <Stepper
             label={T.weight}
             value={numbers.weight}
-            step={2.5}
             onChange={(weight) => setNumbersLocal({ ...numbers, weight })}
           />
           <Stepper

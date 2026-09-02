@@ -16,17 +16,20 @@ import { WeightChart } from '../components/WeightChart';
 /** One exercise, from the trainee's side: how to do it, what to lift, and how
    the weight has moved. Weight is adjustable; sets and reps are not. */
 export function ExerciseDetail() {
-  const { exerciseId = '' } = useParams();
+  const { itemId = '' } = useParams();
   const { profile } = useAuth();
   const navigate = useNavigate();
 
   const { data: programs } = usePrograms(profile?.id);
-  const { data: history } = useExerciseHistory(profile?.id, exerciseId);
-  const setNumbers = useSetNumbers();
 
+  // Addressed by program item, not by exercise: the same exercise can sit in
+  // two programs with different numbers, and an exercise id cannot say which.
   const item = (programs ?? [])
     .flatMap((program) => program.items)
-    .find((candidate) => candidate.exercise_id === exerciseId);
+    .find((candidate) => candidate.id === itemId);
+
+  const { data: history } = useExerciseHistory(profile?.id, item?.exercise_id);
+  const setNumbers = useSetNumbers();
 
   if (!programs) return <Splash />;
   if (!item) return <Navigate to="/trainee" replace />;
@@ -125,7 +128,7 @@ function Body({
             <span style={s('font:700 10px/1;color:#8b8f96')}>{T.weightKg}</span>
             <div style={s('display:flex;align-items:center;justify-content:space-between;gap:6px')}>
               <Press
-                onClick={() => setWeight(Math.max(0, weight - 2.5))}
+                onClick={() => setWeight(Math.max(0, weight - 1))}
                 style={s(
                   'width:34px;height:34px;border-radius:50%;background:#f4f5f7;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .14s cubic-bezier(.34,1.5,.5,1)',
                 )}
@@ -147,7 +150,7 @@ function Body({
                 {formatWeight(weight)}
               </span>
               <Press
-                onClick={() => setWeight(weight + 2.5)}
+                onClick={() => setWeight(weight + 1)}
                 style={s(
                   'width:34px;height:34px;border-radius:50%;background:#e0231a;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 14px -6px rgba(224,35,26,.55);transition:transform .14s cubic-bezier(.34,1.5,.5,1)',
                 )}

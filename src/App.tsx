@@ -35,7 +35,7 @@ export function App() {
         }
       />
       <Route
-        path="/exercise/:exerciseId"
+        path="/exercise/:itemId"
         element={
           <Gate role="trainee">
             <ExerciseDetail />

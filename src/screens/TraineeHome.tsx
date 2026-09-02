@@ -44,7 +44,7 @@ export function TraineeHome() {
             <Press
               onClick={() => setMenuOpen(true)}
               style={s(
-                'width:52px;height:52px;border-radius:50%;background:#dfe1e4;flex:none;display:flex;align-items:center;justify-content:center;font:700 16px/1;color:#5c5f66;cursor:pointer',
+                'width:52px;height:52px;border-radius:50%;background:#e0231a;flex:none;display:flex;align-items:center;justify-content:center;font:700 16px/1;color:#fff;cursor:pointer;box-shadow:0 6px 14px -8px rgba(224,35,26,.7)',
               )}
               activeStyle={s('transform:scale(.94)')}
             >
@@ -71,7 +71,7 @@ export function TraineeHome() {
                 style={s(
                   'flex:none;padding:8px 14px;border-radius:12px;font:600 12px/1;cursor:pointer;' +
                     (program.id === active?.id
-                      ? 'background:#17181c;color:#fff'
+                      ? 'background:#e0231a;color:#fff;box-shadow:0 6px 14px -8px rgba(224,35,26,.7)'
                       : 'background:#fff;color:#5c5f66'),
                 )}
               >
@@ -86,7 +86,10 @@ export function TraineeHome() {
             'display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px 12px',
           )}
         >
-          <span style={s('font:800 15px/1')}>{active?.name ?? T.noProgram}</span>
+          <span style={s('display:flex;align-items:center;gap:8px;font:800 15px/1;min-width:0')}>
+            <span style={s('flex:none;width:3px;height:15px;border-radius:2px;background:#e0231a')} />
+            {active?.name ?? T.noProgram}
+          </span>
           {active && dayLabel(active.day_of_week) && (
             <span
               style={s(
@@ -113,7 +116,7 @@ export function TraineeHome() {
             <span>{T.colExercise}</span>
             <span style={s('text-align:center')}>{T.colSets}</span>
             <span style={s('text-align:center')}>{T.colReps}</span>
-            <span style={s('text-align:center')}>{T.colKg}</span>
+            <span style={s('text-align:center;color:#b81b13')}>{T.colKg}</span>
             <span />
           </div>
 
@@ -123,7 +126,7 @@ export function TraineeHome() {
               item={item}
               open={openRow === item.id}
               onToggle={() => setOpenRow((prev) => (prev === item.id ? null : item.id))}
-              onOpenDetail={() => navigate(`/exercise/${item.exercise_id}`)}
+              onOpenDetail={() => navigate(`/exercise/${item.id}`)}
               onWeight={(weight) =>
                 setNumbers.mutate({
                   traineeId: profile!.id,
@@ -190,7 +193,7 @@ function Row({
           <span
             className="num"
             style={s(
-              'background:#f4f5f7;border-radius:9px;padding:5px 7px;font:700 12.5px/1;font-variant-numeric:tabular-nums',
+              'background:#fdeceb;color:#b81b13;border-radius:9px;padding:5px 7px;font:700 12.5px/1;font-variant-numeric:tabular-nums',
             )}
           >
             {formatWeight(weight)}
@@ -228,7 +231,7 @@ function Row({
             <span style={s('font:600 11px/1;color:#5c5f66')}>{T.updateWeight}</span>
             <div style={s('display:flex;align-items:center;gap:10px')}>
               <Press
-                onClick={() => setWeight(Math.max(0, weight - 2.5))}
+                onClick={() => setWeight(Math.max(0, weight - 1))}
                 style={s(
                   'width:38px;height:38px;border-radius:50%;background:#fff;box-shadow:var(--shadow-knob);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .14s cubic-bezier(.34,1.5,.5,1)',
                 )}
@@ -253,7 +256,7 @@ function Row({
                 {formatWeight(weight)}
               </span>
               <Press
-                onClick={() => setWeight(weight + 2.5)}
+                onClick={() => setWeight(weight + 1)}
                 style={s(
                   'width:38px;height:38px;border-radius:50%;background:#e0231a;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 14px -6px rgba(224,35,26,.55);transition:transform .14s cubic-bezier(.34,1.5,.5,1)',
                 )}

@@ -17,11 +17,21 @@ export function useDebouncedSave<T>(
 ): [T, (next: T) => void] {
   const [local, setLocal] = useState(serverValue);
   const pending = useRef(false);
+  /** What was sent but has not come back yet. */
+  const inFlight = useRef<{ value: T } | null>(null);
   const latestSave = useRef(save);
   latestSave.current = save;
 
   useEffect(() => {
-    if (!pending.current) setLocal(serverValue);
+    if (pending.current) return;
+    // A write is not finished when it is sent — the value only comes back on
+    // the refetch. Adopting whatever the cache still holds in between put the
+    // old number back, which read as the edit being discarded.
+    if (inFlight.current) {
+      if (serverValue !== inFlight.current.value) return;
+      inFlight.current = null;
+    }
+    setLocal(serverValue);
   }, [serverValue]);
 
   const set = useCallback((next: T) => {
@@ -33,6 +43,7 @@ export function useDebouncedSave<T>(
     if (!pending.current) return;
     const timer = setTimeout(() => {
       pending.current = false;
+      inFlight.current = { value: local };
       latestSave.current(local);
     }, delay);
     return () => clearTimeout(timer);

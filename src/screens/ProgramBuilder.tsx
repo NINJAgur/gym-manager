@@ -188,7 +188,6 @@ export function ProgramBuilder() {
                 <NumberCell
                   width={44}
                   value={item.weight}
-                  step={2.5}
                   onChange={(weight) => patchItem(itemIndex, { weight })}
                 />
                 <Press
