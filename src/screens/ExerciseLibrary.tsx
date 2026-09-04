@@ -14,7 +14,9 @@ export function ExerciseLibrary() {
   const { data: exercises, isPending } = useExercises();
   const remove = useDeleteExercise();
 
-  const [closed, setClosed] = useState<Record<string, boolean>>({});
+  // Closed by default: the catalogue is long, and the point of the screen is
+  // finding one group rather than scrolling all of them.
+  const [opened, setOpened] = useState<Record<string, boolean>>({});
   const [armed, setArmed] = useState<string | null>(null);
 
   // A trash tap arms; the second within three seconds deletes.
@@ -66,7 +68,7 @@ export function ExerciseLibrary() {
         )}
       >
         {groups.map((group, index) => {
-          const open = !closed[group.name];
+          const open = Boolean(opened[group.name]);
           return (
             <div
               key={group.name}
@@ -77,7 +79,7 @@ export function ExerciseLibrary() {
               )}
             >
               <Press
-                onClick={() => setClosed((prev) => ({ ...prev, [group.name]: !prev[group.name] }))}
+                onClick={() => setOpened((prev) => ({ ...prev, [group.name]: !prev[group.name] }))}
                 style={s(
                   'display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer',
                 )}

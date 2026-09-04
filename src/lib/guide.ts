@@ -2,16 +2,12 @@ import catalogue from './guide-exercises.json';
 import hebrew from './guide-he.json';
 
 /** Open exercise illustrations from bryllim.github.io/workout-guide — 302
-   exercises, three SVG frames each, which we cycle to animate. Not video:
-   the source has none, so this stands in until a real clip is uploaded. */
+   exercises, three SVG frames each. Not video: the source has none, so this
+   stands in until a real clip is uploaded.
+   
+   Loaded from the source's own host. Copying them in was tried and reverted:
+   906 files is 27MB of repository for art we may yet replace. */
 const BASE = 'https://bryllim.github.io/workout-guide/frames';
-
-/** Each exercise ships three SVGs, but they are not three steps of one loop:
-   frame 2 is a heavier-outlined still the catalogue uses as its thumbnail,
-   while 1 and 3 are the two poses that read as movement when alternated.
-   Cycling all three made the bold still flash through the animation. */
-const ANIMATION_FRAMES = [1, 3];
-export const GUIDE_FRAMES = ANIMATION_FRAMES.length;
 
 export interface GuideExercise {
   slug: string;
@@ -31,6 +27,11 @@ export const guideName = (slug: string | null | undefined): string | null => {
   if (!slug) return null;
   return GUIDE.find((entry) => entry.slug === slug)?.he ?? slug;
 };
+
+/** Frames 1 and 3 are the two poses; frame 2 is a heavier-outlined still the
+   source uses as its own thumbnail. */
+const ANIMATION_FRAMES = [1, 3];
+export const GUIDE_FRAMES = ANIMATION_FRAMES.length;
 
 export const guideFrame = (slug: string, frame: number) =>
   `${BASE}/${slug}/frame-${ANIMATION_FRAMES[((frame % GUIDE_FRAMES) + GUIDE_FRAMES) % GUIDE_FRAMES]}.svg`;

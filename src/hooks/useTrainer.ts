@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
-import type { AccountStatus, Exercise, TraineeOverview } from '../lib/types';
+import type { AccountStatus, Exercise, Role, TraineeOverview } from '../lib/types';
 import { VIDEO_BUCKET, storagePath } from '../lib/video';
 import { qk } from './keys';
 
@@ -15,7 +15,7 @@ export function useTrainees() {
     queryFn: async (): Promise<TraineeOverview[]> => {
       const { data, error } = await supabase
         .from('trainee_overview')
-        .select('id, full_name, email, status, created_at, program_count, last_logged_at')
+        .select('id, full_name, email, role, status, avatar_url, created_at, program_count, last_logged_at')
         .order('full_name');
       if (error) throw error;
       return data as TraineeOverview[];
@@ -31,6 +31,60 @@ export function useSetAccountStatus() {
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: qk.trainees() }),
+  });
+}
+
+/** Promote a trainee to trainer, or hand the role back. The database allows
+   this only from a trainer; a trigger enforces it independently of the UI. */
+export function useSetRole() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, role }: { id: string; role: Role }) => {
+      const { error } = await supabase.from('profiles').update({ role }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: qk.trainees() }),
+  });
+}
+
+/** Removes the account outright, for a sign-up the trainer does not recognise.
+   Deleting the profile alone would not hold — it is recreated from auth.users
+   on the next sign-in — so this goes through a function that deletes the user. */
+export function useDeleteAccount() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      const { error } = await supabase.rpc('delete_account', { target: id });
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: qk.trainees() }),
+  });
+}
+
+const AVATAR_BUCKET = 'avatars';
+
+/** Replaces the signed-in person's picture. Stored under a folder named for
+   their user id, which is what the storage policy checks. */
+export function useUploadAvatar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userId, file }: { userId: string; file: File }): Promise<string> => {
+      const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
+      const path = `${userId}/${crypto.randomUUID()}.${ext}`;
+      const uploaded = await supabase.storage
+        .from(AVATAR_BUCKET)
+        .upload(path, file, { cacheControl: '3600', contentType: file.type || undefined });
+      if (uploaded.error) throw uploaded.error;
+
+      const url = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(path).data.publicUrl;
+      const { error } = await supabase.from('profiles').update({ avatar_url: url }).eq('id', userId);
+      if (error) throw error;
+      return url;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: qk.trainees() });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    },
   });
 }
 

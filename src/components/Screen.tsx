@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { SiteFooter } from './SiteFooter';
 
 /** The canvas's 390x812 artboard becomes the viewport: same ground, same
    overflow clip, same positioning context for sheets and the bottom nav.
@@ -28,6 +29,7 @@ export function Screen({ children }: { children: ReactNode }) {
         }}
       >
         {children}
+        <SiteFooter />
       </div>
     </div>
   );

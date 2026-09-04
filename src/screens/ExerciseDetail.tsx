@@ -32,14 +32,14 @@ export function ExerciseDetail() {
   const setNumbers = useSetNumbers();
 
   if (!programs) return <Splash />;
-  if (!item) return <Navigate to="/trainee" replace />;
+  if (!item) return <Navigate to={profile?.role === 'trainer' ? '/trainer/me' : '/trainee'} replace />;
 
   return (
     <Screen>
       <Body
         item={item}
         history={history ?? []}
-        onBack={() => navigate('/trainee')}
+        onBack={() => navigate(profile?.role === 'trainer' ? '/trainer/me' : '/trainee')}
         onWeight={(weight) =>
           setNumbers.mutate({
             traineeId: profile!.id,

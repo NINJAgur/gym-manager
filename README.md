@@ -72,3 +72,13 @@ src/screens/               Landing, SignIn, AccountGate, TraineeHome,
 src/components/            Screen, Sheet, Press, Stepper, VideoEmbed,
                            GuideIllustration, WeightChart, BottomNav
 ```
+
+## Licences
+
+The exercise illustrations are third-party art under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), not ours to
+relicense. See [NOTICE.md](NOTICE.md) for the full attribution.
+
+This repository has no licence of its own, which means default copyright: no
+one may reuse the code without permission. Add a `LICENSE` file at the root if
+that is not what you want.

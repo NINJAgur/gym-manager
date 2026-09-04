@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { chevStyle, s } from '../lib/css';
-import { formatWeight, initials } from '../lib/format';
+import { formatWeight } from '../lib/format';
 import { T, dayLabel, groupLabel } from '../i18n/he';
 import {
   useAddProgramItem,
@@ -16,6 +16,7 @@ import { Screen } from '../components/Screen';
 import { Press } from '../components/Press';
 import { Sheet } from '../components/Sheet';
 import { BottomNav } from '../components/BottomNav';
+import { ProfilePicture } from '../components/ProfilePicture';
 import { TrainerHeader } from '../components/TrainerHeader';
 import { Stepper } from '../components/Stepper';
 import { WeightChart } from '../components/WeightChart';
@@ -29,6 +30,8 @@ const STATUS = {
 
 export function TrainerTrainees() {
   const { data: trainees, isPending } = useTrainees();
+  // The trainer trains on /trainer/me, not in their own trainee list.
+  const list = (trainees ?? []).filter((person) => person.role !== 'trainer');
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
@@ -41,7 +44,7 @@ export function TrainerTrainees() {
           'flex:1;min-height:0;overflow-y:auto;padding:0 18px 96px;display:flex;flex-direction:column;gap:12px',
         )}
       >
-        {(trainees ?? []).map((trainee, index) => (
+        {list.map((trainee, index) => (
           <TraineeCard
             key={trainee.id}
             trainee={trainee}
@@ -50,7 +53,7 @@ export function TrainerTrainees() {
             onToggle={() => setExpanded((prev) => (prev === trainee.id ? null : trainee.id))}
           />
         ))}
-        {(trainees?.length ?? 0) === 0 && (
+        {list.length === 0 && (
           <span style={s('font:400 12px/1.6;color:#8b8f96;text-align:center;padding:20px 0')}>
             {isPending ? T.loading : T.noTrainees}
           </span>
@@ -90,13 +93,11 @@ function TraineeCard({
         onClick={onToggle}
         style={s('display:flex;align-items:center;gap:13px;padding:14px 16px;cursor:pointer')}
       >
-        <div
-          style={s(
-            'flex:none;width:44px;height:44px;border-radius:50%;background:#eceef0;display:flex;align-items:center;justify-content:center;font:700 13px/1;color:#5c5f66',
-          )}
-        >
-          {initials(trainee.full_name ?? trainee.email)}
-        </div>
+        <ProfilePicture
+          url={trainee.avatar_url}
+          name={trainee.full_name ?? trainee.email}
+          size={44}
+        />
         <div style={s('flex:1;display:flex;flex-direction:column;gap:6px;min-width:0')}>
           <span style={s('font:600 15px/1')}>{trainee.full_name ?? trainee.email}</span>
           <div style={s('display:flex;align-items:center;gap:6px;flex-wrap:wrap')}>

@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthProvider';
 import { homeFor } from '../App';
 import { Press } from '../components/Press';
 import { APP_NAME } from '../lib/app';
+import { SiteFooter } from '../components/SiteFooter';
 
 const POINTS = [
   'המאמן בונה תוכנית אימון — כללית או מפוצלת לפי ימים — ומשייך אותה למתאמן.',
@@ -98,18 +99,9 @@ export function Landing() {
           <span style={s('font:700 15.5px/1')}>כניסה לאפליקציה</span>
         </Press>
 
-        <footer
-          style={s(
-            'margin-top:auto;padding-top:20px;border-top:1px solid #dfe1e4;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:baseline',
-          )}
-        >
-          <span style={s('font:400 11.5px/1.5;color:#8b8f96')}>
-            התחברות עם חשבון Google או עם קוד לדוא״ל. המאמן מאשר גישה לחשבון חדש.
-          </span>
-          <a href="/privacy" style={s('font:600 11.5px/1.5;color:#b81b13')}>
-            מדיניות פרטיות
-          </a>
-        </footer>
+        <div style={s('margin-top:auto')}>
+          <SiteFooter full />
+        </div>
       </div>
     </div>
   );

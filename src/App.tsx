@@ -34,10 +34,12 @@ export function App() {
           </Gate>
         }
       />
+      {/* No role gate: a trainer opens their own rows from /trainer/me, and
+          RLS already limits the data to programs that belong to the viewer. */}
       <Route
         path="/exercise/:itemId"
         element={
-          <Gate role="trainee">
+          <Gate anyRole>
             <ExerciseDetail />
           </Gate>
         }
@@ -48,6 +50,14 @@ export function App() {
         element={
           <Gate role="trainer">
             <TrainerTrainees />
+          </Gate>
+        }
+      />
+      <Route
+        path="/trainer/me"
+        element={
+          <Gate role="trainer">
+            <TraineeHome />
           </Gate>
         }
       />
@@ -92,7 +102,16 @@ export function App() {
 /** Session, then approval, then role. A trainee who has not been approved
    never reaches the app — the account status gate sits in front of the role
    check, so pending and deactivated people see why rather than an empty app. */
-function Gate({ role, children }: { role?: Role; children: React.ReactNode }) {
+function Gate({
+  role,
+  anyRole,
+  children,
+}: {
+  role?: Role;
+  /** Signed in is enough — the screen serves both roles. */
+  anyRole?: boolean;
+  children: React.ReactNode;
+}) {
   const { session, profile, loading, profileError } = useAuth();
 
   if (loading) return <Splash />;
@@ -105,6 +124,9 @@ function Gate({ role, children }: { role?: Role; children: React.ReactNode }) {
     return <AccountGate state={profile.status === 'deactivated' ? 'deactivated' : 'pending'} />;
   }
 
+  if (anyRole) return <>{children}</>;
+  // No role and no anyRole means this is a bare entry point (/app, /signin):
+  // send the person to whichever home their role implies.
   if (!role) return <Navigate to={homeFor(profile.role)} replace />;
   if (profile.role !== role) return <Navigate to={homeFor(profile.role)} replace />;
   return <>{children}</>;

@@ -45,8 +45,9 @@ export function SignIn() {
   return (
     <Screen>
       <div
+        className="scr"
         style={s(
-          'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:26px',
+          'position:absolute;inset:0;overflow-y:auto;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:26px',
         )}
       >
         <div

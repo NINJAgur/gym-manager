@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { s } from '../lib/css';
-import { initials } from '../lib/format';
 import { T } from '../i18n/he';
 import { useAuth } from '../auth/AuthProvider';
 import { Press } from './Press';
+import { ProfilePicture } from './ProfilePicture';
 import { AccountMenu } from './AccountMenu';
 
 /** Every trainer screen's header. The avatar is the way out — the bottom nav
@@ -23,12 +23,15 @@ export function TrainerHeader({ title, children }: { title: string; children?: R
           <Press
             onClick={() => setMenuOpen(true)}
             title={T.signOut}
-            style={s(
-              'flex:none;width:44px;height:44px;border-radius:50%;background:#e0231a;display:flex;align-items:center;justify-content:center;font:700 13px/1;color:#fff;cursor:pointer;box-shadow:0 6px 14px -8px rgba(224,35,26,.7);transition:transform .14s ease',
-            )}
+            style={s('flex:none;cursor:pointer;transition:transform .14s ease')}
             activeStyle={s('transform:scale(.94)')}
           >
-            {initials(profile?.full_name ?? profile?.email)}
+            <ProfilePicture
+              url={profile?.avatar_url}
+              name={profile?.full_name ?? profile?.email}
+              size={44}
+              accent
+            />
           </Press>
         </div>
         {children}

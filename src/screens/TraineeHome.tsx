@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { panelStyle, s } from '../lib/css';
-import { formatWeight, initials } from '../lib/format';
+import { formatWeight } from '../lib/format';
 import { T, dayLabel } from '../i18n/he';
 import { useAuth } from '../auth/AuthProvider';
 import { usePrograms, useSetNumbers } from '../hooks/usePrograms';
@@ -10,6 +10,8 @@ import { Screen } from '../components/Screen';
 import { Press } from '../components/Press';
 import { useDebouncedSave } from '../hooks/useDebouncedSave';
 import { AccountMenu } from '../components/AccountMenu';
+import { ProfilePicture } from '../components/ProfilePicture';
+import { BottomNav } from '../components/BottomNav';
 
 /** The trainee's whole app: their program as a table, one row per exercise.
    Tapping a row opens a weight stepper — weight is the only thing they may
@@ -28,13 +30,18 @@ export function TraineeHome() {
   const [openRow, setOpenRow] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // A trainer trains too. Same screen, with the nav they came in on.
+  const isTrainer = profile?.role === 'trainer';
   const list = programs ?? [];
   const active = list.find((p) => p.id === programId) ?? list[0];
   const firstName = (profile?.full_name ?? '').split(' ')[0];
 
   return (
     <Screen>
-      <div className="scr" style={s('flex:1;min-height:0;overflow-y:auto;padding-bottom:20px')}>
+      <div
+        className="scr"
+        style={s('flex:1;min-height:0;overflow-y:auto;padding-bottom:' + (isTrainer ? '96px' : '20px'))}
+      >
         <div
           style={s(
             'padding:30px 18px 6px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px',
@@ -43,12 +50,15 @@ export function TraineeHome() {
           <div style={s('display:flex;align-items:center;gap:12px;min-width:0')}>
             <Press
               onClick={() => setMenuOpen(true)}
-              style={s(
-                'width:52px;height:52px;border-radius:50%;background:#e0231a;flex:none;display:flex;align-items:center;justify-content:center;font:700 16px/1;color:#fff;cursor:pointer;box-shadow:0 6px 14px -8px rgba(224,35,26,.7)',
-              )}
+              style={s('flex:none;cursor:pointer')}
               activeStyle={s('transform:scale(.94)')}
             >
-              {initials(profile?.full_name ?? profile?.email)}
+              <ProfilePicture
+                url={profile?.avatar_url}
+                name={profile?.full_name ?? profile?.email}
+                size={52}
+                accent
+              />
             </Press>
             <div style={s('display:flex;flex-direction:column;gap:3px;min-width:0')}>
               <span style={s('font:800 17px/1.15')}>
@@ -90,6 +100,28 @@ export function TraineeHome() {
             <span style={s('flex:none;width:3px;height:15px;border-radius:2px;background:#e0231a')} />
             {active?.name ?? T.noProgram}
           </span>
+          {isTrainer && (
+            <Press
+              onClick={() => navigate(`/trainer/program/new?trainee=${profile!.id}`)}
+              style={s(
+                'flex:none;display:flex;align-items:center;gap:5px;padding:7px 11px;border-radius:10px;background:#e0231a;color:#fff;cursor:pointer;transition:transform .14s ease',
+              )}
+              activeStyle={s('transform:scale(.94)')}
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.6"
+                strokeLinecap="round"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              <span style={s('font:700 10.5px/1')}>{T.newProgramForMe}</span>
+            </Press>
+          )}
           {active && dayLabel(active.day_of_week) && (
             <span
               style={s(
@@ -140,12 +172,13 @@ export function TraineeHome() {
 
           {(active?.items.length ?? 0) === 0 && (
             <div style={s('padding:22px 16px;font:400 12px/1.6;color:#8b8f96;text-align:center')}>
-              {isPending ? T.loading : T.emptyProgram}
+              {isPending ? T.loading : isTrainer ? T.emptyProgramSelf : T.emptyProgram}
             </div>
           )}
         </div>
       </div>
 
+      {isTrainer && <BottomNav />}
       {menuOpen && <AccountMenu onClose={() => setMenuOpen(false)} />}
     </Screen>
   );

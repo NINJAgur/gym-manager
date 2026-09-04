@@ -3,6 +3,7 @@ export type AccountStatus = 'pending' | 'active' | 'deactivated';
 
 export interface Profile {
   id: string;
+  avatar_url: string | null;
   email: string | null;
   full_name: string | null;
   role: Role;
@@ -56,6 +57,8 @@ export interface PerformanceLog {
 
 export interface TraineeOverview {
   id: string;
+  role: Role;
+  avatar_url: string | null;
   full_name: string | null;
   email: string | null;
   status: AccountStatus;

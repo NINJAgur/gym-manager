@@ -23,6 +23,7 @@ export const T = {
   deactivatedTitle: 'הגישה שלך הושבתה',
   deactivatedBody: 'המאמן שלך השבית את החשבון. פנה אליו אם לדעתך מדובר בטעות.',
   signOut: 'יציאה',
+  changePicture: 'החלפת תמונה',
 
   // trainee home
   greeting: 'שלום',
@@ -34,6 +35,7 @@ export const T = {
   colKg: 'ק"ג',
   updateWeight: 'עדכון משקל נוכחי',
   emptyProgram: 'המאמן שלך עדיין לא הוסיף תרגילים לתוכנית.',
+  emptyProgramSelf: 'אין תוכנית משויכת.',
 
   // trainee detail
   setsByReps: 'סטים × חזרות',
@@ -81,6 +83,13 @@ export const T = {
   usersLabel: 'משתמשים',
   signedUp: 'נרשם',
   noPending: 'אין בקשות ממתינות.',
+  promoteToTrainer: 'הפוך למאמן',
+  demoteToTrainee: 'הפוך למתאמן',
+  roleTrainer: 'מאמן',
+  roleTrainee: 'מתאמן',
+  rejectAndDelete: 'דחיית הבקשה ומחיקת החשבון',
+  myTraining: 'האימון שלי',
+  newProgramForMe: 'תוכנית חדשה',
 
   // exercise library
   libraryTitle: 'מאגר תרגילים',
@@ -116,6 +125,10 @@ export const T = {
   saving: 'שומר…',
   saveFailed: 'השמירה נכשלה — נסה שוב',
   profileMissing: 'לא הצלחנו לטעון את הפרופיל שלך',
+  credits: 'עידן גורין - בן רפאל',
+  videoCredit: 'סרטוני ההדגמה: Everkinetic דרך Workout Guide,',
+  privacyPolicy: 'מדיניות פרטיות',
+  illustrationLicence: 'רישיון CC BY-SA 4.0',
   dash: '—',
   cancel: 'ביטול',
 } as const;

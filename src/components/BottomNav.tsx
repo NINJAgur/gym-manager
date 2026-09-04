@@ -24,6 +24,15 @@ const TABS = [
     ),
   },
   {
+    to: '/trainer/me',
+    label: T.myTraining,
+    icon: (
+      <>
+        <path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11" />
+      </>
+    ),
+  },
+  {
     to: '/trainer/users',
     label: T.navUsers,
     icon: (
@@ -44,7 +53,7 @@ export function BottomNav() {
   return (
     <div
       style={s(
-        'position:absolute;bottom:14px;left:14px;right:14px;height:62px;background:#17181c;border-radius:31px;display:flex;align-items:center;justify-content:space-around;padding:0 8px;box-shadow:var(--shadow-nav);z-index:8',
+        'position:absolute;bottom:46px;left:14px;right:14px;height:62px;background:#17181c;border-radius:31px;display:flex;align-items:center;justify-content:space-around;padding:0 8px;box-shadow:var(--shadow-nav);z-index:8',
       )}
     >
       {TABS.map((tab) => {
