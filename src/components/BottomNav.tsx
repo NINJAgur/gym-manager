@@ -53,7 +53,7 @@ export function BottomNav() {
   return (
     <div
       style={s(
-        'position:absolute;bottom:46px;left:14px;right:14px;height:62px;background:#17181c;border-radius:31px;display:flex;align-items:center;justify-content:space-around;padding:0 8px;box-shadow:var(--shadow-nav);z-index:8',
+        'position:absolute;bottom:80px;left:14px;right:14px;height:62px;background:#17181c;border-radius:31px;display:flex;align-items:center;justify-content:space-around;padding:0 8px;box-shadow:var(--shadow-nav);z-index:8',
       )}
     >
       {TABS.map((tab) => {

@@ -40,7 +40,7 @@ export function TraineeHome() {
     <Screen>
       <div
         className="scr"
-        style={s('flex:1;min-height:0;overflow-y:auto;padding-bottom:' + (isTrainer ? '96px' : '20px'))}
+        style={s('flex:1;min-height:0;overflow-y:auto;padding-bottom:' + (isTrainer ? '130px' : '20px'))}
       >
         <div
           style={s(

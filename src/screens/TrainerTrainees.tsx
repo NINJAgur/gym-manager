@@ -41,7 +41,7 @@ export function TrainerTrainees() {
       <div
         className="scr"
         style={s(
-          'flex:1;min-height:0;overflow-y:auto;padding:0 18px 96px;display:flex;flex-direction:column;gap:12px',
+          'flex:1;min-height:0;overflow-y:auto;padding:0 18px 130px;display:flex;flex-direction:column;gap:12px',
         )}
       >
         {list.map((trainee, index) => (

@@ -116,7 +116,10 @@ function Body({
             )}
           >
             <span style={s('font:700 10px/1;color:#8b8f96')}>{T.setsByReps}</span>
-            <span className="num" style={s('font:800 26px/1;font-variant-numeric:tabular-nums')}>
+            <span
+              className="num"
+              style={s('font:800 26px/1;font-variant-numeric:tabular-nums;text-align:center')}
+            >
               {item.sets} × {item.reps}
             </span>
           </div>

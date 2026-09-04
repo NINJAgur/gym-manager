@@ -64,7 +64,7 @@ export function ExerciseLibrary() {
       <div
         className="scr"
         style={s(
-          'flex:1;min-height:0;overflow-y:auto;padding:0 18px 96px;display:flex;flex-direction:column;gap:12px',
+          'flex:1;min-height:0;overflow-y:auto;padding:0 18px 130px;display:flex;flex-direction:column;gap:12px',
         )}
       >
         {groups.map((group, index) => {
